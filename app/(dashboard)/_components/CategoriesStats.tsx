@@ -95,6 +95,7 @@ function CategoriesCard({
               {filteredData.map((item) => {
                 const amount = item._sum.amount || 0;
                 const percentage = (amount * 100) / (total || amount);
+                console.log(percentage);
 
                 return (
                   <div key={item.category} className="flex flex-col gap-2">
@@ -102,7 +103,7 @@ function CategoriesCard({
                       <span className="flex items-center text-gray-400">
                         {item.categoryIcon} {item.category}
                         <span className="ml-2 text-xs text-muted-foreground">
-                          ({percentage.toFixed(0)}%)
+                          ({percentage.toFixed(2)}%)
                         </span>
                       </span>
 
