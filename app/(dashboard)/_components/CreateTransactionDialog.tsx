@@ -105,7 +105,13 @@ function CreateTransactionDialog({ trigger, type }: Props) {
   );
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(open) => {
+        setOpen(open);
+        form.reset(); 
+      }}
+    >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -134,7 +140,7 @@ function CreateTransactionDialog({ trigger, type }: Props) {
                     <Input defaultValue={""} {...field} />
                   </FormControl>
                   <FormDescription>
-                    Transaction description (optional)
+                    Transaction description (required)
                   </FormDescription>
                 </FormItem>
               )}

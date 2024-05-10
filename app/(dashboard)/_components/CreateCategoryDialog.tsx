@@ -100,7 +100,13 @@ function CreateCategoryDialog({ type, successCallback, trigger }: Props) {
   );
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(open) => {
+        setOpen(open);
+        form.reset();
+      }}
+    >
       <DialogTrigger asChild>
         {trigger ? (
           trigger
