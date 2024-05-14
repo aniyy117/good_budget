@@ -109,7 +109,7 @@ function CreateTransactionDialog({ trigger, type }: Props) {
       open={open}
       onOpenChange={(open) => {
         setOpen(open);
-        form.reset(); 
+        form.reset();
       }}
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -161,7 +161,7 @@ function CreateTransactionDialog({ trigger, type }: Props) {
               )}
             />
 
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2">
               <FormField
                 control={form.control}
                 name="category"
@@ -193,7 +193,7 @@ function CreateTransactionDialog({ trigger, type }: Props) {
                           <Button
                             variant={"outline"}
                             className={cn(
-                              "w-[200px] pl-3 text-left font-normal",
+                              "w-full md:w-[200px] pl-3 text-left font-normal",
                               !field.value && "text-muted-foreground"
                             )}
                           >
@@ -206,7 +206,7 @@ function CreateTransactionDialog({ trigger, type }: Props) {
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
+                      <PopoverContent className="w-auto p-0" side="top">
                         <Calendar
                           mode="single"
                           selected={field.value}
@@ -214,7 +214,10 @@ function CreateTransactionDialog({ trigger, type }: Props) {
                             if (!value) return;
                             field.onChange(value);
                           }}
-                          initialFocus
+                          disabled={(date) =>
+                            date > new Date() || date < new Date("1900-01-01")
+                          }
+                          // initialFocus
                         />
                       </PopoverContent>
                     </Popover>
@@ -226,7 +229,7 @@ function CreateTransactionDialog({ trigger, type }: Props) {
             </div>
           </form>
         </Form>
-        <DialogFooter>
+        <DialogFooter className="gap-2">
           <DialogClose asChild>
             <Button
               type="button"

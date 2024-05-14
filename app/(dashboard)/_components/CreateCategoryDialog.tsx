@@ -51,6 +51,7 @@ interface Props {
 
 function CreateCategoryDialog({ type, successCallback, trigger }: Props) {
   const [open, setOpen] = useState(false);
+  const [isOpenEmojiPicker, setIsOpenEmojiPicker] = useState(false);
   const form = useForm<CreateCategorySchemaType>({
     resolver: zodResolver(CreateCategorySchema),
     defaultValues: {
@@ -163,11 +164,12 @@ function CreateCategoryDialog({ type, successCallback, trigger }: Props) {
                 <FormItem>
                   <FormLabel>Icon</FormLabel>
                   <FormControl>
-                    <Popover>
+                    <Popover open={isOpenEmojiPicker}>
                       <PopoverTrigger asChild>
                         <Button
                           variant={"outline"}
                           className="h-[100px] w-full"
+                          onClick={() => setIsOpenEmojiPicker((prev) => !prev)}
                         >
                           {form.watch("icon") ? (
                             <div className="flex flex-col items-center gap-2">
@@ -188,13 +190,16 @@ function CreateCategoryDialog({ type, successCallback, trigger }: Props) {
                           )}
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-full">
+                      <PopoverContent className="w-full translate-y-[18rem] md:translate-y-[0rem]">
                         <Picker
                           data={data}
                           theme={theme.resolvedTheme}
                           onEmojiSelect={(emoji: { native: string }) => {
                             field.onChange(emoji.native);
+                            setIsOpenEmojiPicker((prev) => !prev);
                           }}
+                          navPosition="bottom"
+                          previewPosition="bottom"
                         />
                       </PopoverContent>
                     </Popover>
@@ -207,7 +212,7 @@ function CreateCategoryDialog({ type, successCallback, trigger }: Props) {
             />
           </form>
         </Form>
-        <DialogFooter>
+        <DialogFooter className="gap-2">
           <DialogClose asChild>
             <Button
               type="button"
