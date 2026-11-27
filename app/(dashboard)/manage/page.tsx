@@ -45,7 +45,7 @@ function page() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <CurrencyComboBox />
+            <CurrencyComboBox warnOnChange />
           </CardContent>
         </Card>
         <CategoryList type="income" />

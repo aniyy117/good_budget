@@ -27,7 +27,11 @@ import { UpdateUserCurrency } from "@/app/wizard/_actions/userSettings";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export function CurrencyComboBox() {
+export function CurrencyComboBox({
+  warnOnChange = false,
+}: {
+  warnOnChange?: boolean;
+}) {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [selectedOption, setSelectedOption] = React.useState<Currency | null>(
@@ -78,13 +82,20 @@ export function CurrencyComboBox() {
         return;
       }
 
+      if (warnOnChange && userSettings.data) {
+        const ok = window.confirm(
+          "Existing transactions keep their original currency and saved conversions. Only new transactions will use this as the base currency. Continue?"
+        );
+        if (!ok) return;
+      }
+
       toast.loading("Saving currency...", {
         id: "update-currency",
       });
 
       mutation.mutate(currency.value);
     },
-    [mutation]
+    [mutation, userSettings.data, warnOnChange]
   );
 
   if (isDesktop) {
