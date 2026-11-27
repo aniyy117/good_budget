@@ -21,7 +21,7 @@ Related: [`AGENTS.md`](../../AGENTS.md) · [`EXECUTION_PLAN.md`](../modernizatio
 |-------|------|--------|
 | Unit | Vitest | **In use** — schemas, FX, helpers |
 | E2E | Playwright | **Scaffold** — public `/sign-in`, `/sign-up` |
-| Static | `eslint`, `tsc`, `next build` | **CI** — `.github/workflows/ci.yml` |
+| Static | `eslint`, `tsc` | **CI** — `.github/workflows/ci.yml` (`next build` on Vercel/local) |
 
 ---
 
@@ -53,7 +53,7 @@ GitHub Actions on `pull_request` / `push` to main:
 2. Lint
 3. Typecheck
 4. Unit tests
-5. Build (placeholder Clerk/Postgres env names only)
+Build is **not** in CI (avoids Clerk/DB env secrets). Run `npm run build` locally or on Vercel.
 
 E2E is **not** in CI yet (browser install + Clerk).
 

@@ -11,16 +11,9 @@ concurrency:
 
 jobs:
   verify:
-    name: Lint · Typecheck · Test · Build
+    name: Lint · Typecheck · Test
     runs-on: ubuntu-latest
     timeout-minutes: 20
-
-    env:
-      # From repo Secrets / Variables — never hardcode keys in workflow YAML.
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
-      POSTGRES_PRISMA_URL: ${{ secrets.POSTGRES_PRISMA_URL }}
-      POSTGRES_URL_NON_POOLING: ${{ secrets.POSTGRES_URL_NON_POOLING }}
 
     steps:
       - name: Checkout
@@ -43,6 +36,3 @@ jobs:
 
       - name: Unit tests
         run: npm test
-
-      - name: Build
-        run: npm run build

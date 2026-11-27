@@ -35,7 +35,7 @@ E2E_SKIP_WEBSERVER=1 npm run test:e2e
 # or let Playwright start `npm run start` after a prior build
 ```
 
-CI runs: install → lint → typecheck → unit tests → build (Clerk/DB env from GitHub Actions secrets).
+CI runs: install → lint → typecheck → unit tests. Build is left to local/Vercel (no Clerk/DB secrets in Actions).
 
 ---
 
