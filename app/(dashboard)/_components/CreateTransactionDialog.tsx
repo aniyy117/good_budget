@@ -9,13 +9,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { TransactionType } from "@/lib/types";
+import { Currencies } from "@/lib/currencies";
+import { apiGet } from "@/lib/api";
+import { TransactionType, UserSettings } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
   CreateTransactionSchema,
   CreateTransactionSchemaType,
 } from "@/schema/transaction";
-import { ReactNode, useCallback, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -40,10 +42,17 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CreateTransaction } from "@/app/(dashboard)/_actions/transactions";
 import { toast } from "sonner";
 import { DateToUTCDate } from "@/lib/helpers";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Props {
   trigger: ReactNode;
@@ -51,13 +60,30 @@ interface Props {
 }
 
 function CreateTransactionDialog({ trigger, type }: Props) {
+  const settingsQuery = useQuery<UserSettings | null>({
+    queryKey: ["userSettings"],
+    queryFn: () => apiGet<UserSettings | null>("/api/user-settings"),
+  });
+
   const form = useForm<CreateTransactionSchemaType>({
     resolver: zodResolver(CreateTransactionSchema),
     defaultValues: {
       type,
       date: new Date(),
+      currency: "INR",
     },
   });
+
+  useEffect(() => {
+    const currency = settingsQuery.data?.currency;
+    if (currency) {
+      form.setValue(
+        "currency",
+        currency as CreateTransactionSchemaType["currency"]
+      );
+    }
+  }, [settingsQuery.data?.currency, form]);
+
   const [open, setOpen] = useState(false);
   const handleCategoryChange = useCallback(
     (value: string) => {
@@ -81,6 +107,9 @@ function CreateTransactionDialog({ trigger, type }: Props) {
         amount: 0,
         date: new Date(),
         category: undefined,
+        currency:
+          (settingsQuery.data?.currency as CreateTransactionSchemaType["currency"]) ??
+          "INR",
       });
 
       await Promise.all([
@@ -90,8 +119,8 @@ function CreateTransactionDialog({ trigger, type }: Props) {
 
       setOpen((prev) => !prev);
     },
-    onError: () => {
-      toast.error("Something went wrong", {
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Something went wrong", {
         id: "create-transaction",
       });
     },
@@ -150,21 +179,58 @@ function CreateTransactionDialog({ trigger, type }: Props) {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="amount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Amount</FormLabel>
-                  <FormControl>
-                    <Input defaultValue={0} type="number" {...field} min={0} />
-                  </FormControl>
-                  <FormDescription>
-                    Transaction amount (required)
-                  </FormDescription>
-                </FormItem>
-              )}
-            />
+            <div className="flex flex-col md:flex-row items-stretch md:items-end gap-2">
+              <FormField
+                control={form.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Amount</FormLabel>
+                    <FormControl>
+                      <Input
+                        defaultValue={0}
+                        type="number"
+                        {...field}
+                        min={0}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Transaction amount (required)
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="currency"
+                render={({ field }) => (
+                  <FormItem className="w-full md:w-[180px]">
+                    <FormLabel>Currency</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select currency" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Currencies.map((currency) => (
+                          <SelectItem key={currency.value} value={currency.value}>
+                            {currency.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Currency for this amount
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2">
               <FormField
