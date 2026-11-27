@@ -150,4 +150,4 @@ Do **not** introduce a second app or Pages Router.
 
 ## 6. Known architectural gaps
 
-Tracked in the [audit](../audit/NEXTJS_APPLICATION_AUDIT.md): missing middleware protect, client-only manage/transactions auth, incomplete query invalidation, large client bundles, no tests/CI.
+Tracked in the [audit](../audit/NEXTJS_APPLICATION_AUDIT.md): residual gaps include large client bundles and limited automated coverage; manage/transactions CSR shells addressed in WP6 (ARCH-01).
