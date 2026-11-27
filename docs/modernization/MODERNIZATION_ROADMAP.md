@@ -2,7 +2,7 @@
 
 **Product goal:** Phased modernization of GoodBudget toward **Next.js 16** without rewriting the product or compromising auth, UX, or financial data.
 
-**Last updated:** 27 November 2026 (Phase 0 baseline verified)
+**Last updated:** 27 November 2026 (WP3 client fetch / mutation hygiene completed)
 
 Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT.md`](./PHASE_0_BASELINE_REPORT.md) · [Audit](../audit/NEXTJS_APPLICATION_AUDIT.md) · [`AGENTS.md`](../../AGENTS.md)
 
@@ -37,11 +37,11 @@ Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT
 | Item | Audit IDs | Status |
 |------|-----------|--------|
 | Upgrade Next off 14.2.3 (prefer ≥14.2.35 on 14.x first) | SEC-01, SEC-05 | **Completed** — now **14.2.35** ([WP1 report](./WP1_NEXTJS_SECURITY_UPGRADE_REPORT.md)); residual Next advisories need major upgrade later |
-| Clerk middleware route protection | SEC-02 | Pending |
-| Dashboard layout / manage & transactions auth gates | SEC-03 | Pending |
-| API 401 JSON + client fetch helper | SEC-04, API-01 | Pending |
-| Category lookup includes `type` | BUG-02 | Pending |
-| Query invalidation + mutation `onError` | BUG-03, QUAL-01 | Pending |
+| Clerk middleware route protection | SEC-02 | **Completed** (WP2) |
+| Dashboard layout / manage & transactions auth gates | SEC-03 | **Completed** (WP2) |
+| API 401 JSON + client fetch helper | SEC-04, API-01 | **Completed** — API 401 (WP2); `apiGet` + mutations ([WP3 report](./WP3_CLIENT_FETCH_MUTATION_HYGIENE_REPORT.md)) |
+| Category lookup includes `type` | BUG-02 | **Completed** (WP2) |
+| Query invalidation + mutation `onError` | BUG-03, QUAL-01 | **Completed** (WP3); currency invalidation BUG-13 also WP3 |
 
 **Exit criteria:** Authenticated-only dashboard; APIs fail closed with JSON; critical transaction correctness fixed; Next on a patched release (14.2.x floor or later).
 
@@ -51,10 +51,10 @@ Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT
 
 | Item | Audit IDs | Status |
 |------|-----------|--------|
-| Fix onboarding settings create (no GET side effect) | BUG-01, BUG-11, BUG-13 | Pending |
+| Fix onboarding settings create (no GET side effect) | BUG-01, BUG-11 | Pending (BUG-13 currency invalidation done in WP3) |
 | RSC shells for manage/transactions | ARCH-01 | Pending |
 | Shared date-range controls | ARCH-02 | Pending |
-| Emoji popover / CategoryPicker / stats 400 consistency | BUG-14–16 | Pending |
+| Emoji popover / CategoryPicker / stats 400 consistency | BUG-14–16 | **Partial** — BUG-16 done (WP2); BUG-14/15 pending |
 | Cleanup logs, unused UI, action organization | QUAL-* | Pending |
 | Schema naming (`updatedAt`) | DATA-03 | Pending |
 

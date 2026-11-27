@@ -11,3 +11,6 @@ export const CreateTransactionSchema = z.object({
 export type CreateTransactionSchemaType = z.infer<
   typeof CreateTransactionSchema
 >;
+
+/** Shared with DeleteTransaction Server Action — reject non-UUID ids early. */
+export const DeleteTransactionIdSchema = z.string().uuid();

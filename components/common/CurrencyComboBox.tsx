@@ -19,10 +19,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Currencies, Currency } from "@/lib/currencies";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { apiGet } from "@/lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import SkeletonWrapper from "./SkeletonWrapper";
-import { UserSettings } from "@prisma/client";
+import type { UserSettings } from "@/lib/types";
 import { UpdateUserCurrency } from "@/app/wizard/_actions/userSettings";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export function CurrencyComboBox() {
@@ -31,10 +33,12 @@ export function CurrencyComboBox() {
   const [selectedOption, setSelectedOption] = React.useState<Currency | null>(
     null
   );
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
   const userSettings = useQuery<UserSettings>({
     queryKey: ["userSettings"],
-    queryFn: () => fetch("/api/user-settings").then((res) => res.json()),
+    queryFn: () => apiGet<UserSettings>("/api/user-settings"),
   });
 
   React.useEffect(() => {
@@ -47,7 +51,7 @@ export function CurrencyComboBox() {
 
   const mutation = useMutation({
     mutationFn: UpdateUserCurrency,
-    onSuccess: (data: UserSettings) => {
+    onSuccess: async (data: UserSettings) => {
       toast.success(`Currency updated successfully 🎉`, {
         id: "update-currency",
       });
@@ -55,9 +59,12 @@ export function CurrencyComboBox() {
       setSelectedOption(
         Currencies.find((c) => c.value === data.currency) || null
       );
+
+      await queryClient.invalidateQueries({ queryKey: ["userSettings"] });
+      // Dashboard formatters come from RSC-passed settings — refresh server tree.
+      router.refresh();
     },
-    onError: (e) => {
-      console.error(e);
+    onError: () => {
       toast.error("Something went wrong", {
         id: "update-currency",
       });

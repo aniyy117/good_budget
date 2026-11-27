@@ -55,7 +55,9 @@ Layouts/pages historically use lowercase `function layout` / `function page` —
 
 - Mutations: Server Actions.
 - Client reads: TanStack Query with coherent keys and invalidation.
-- Handle mutation `onError` and check `res.ok` on fetches (or use a shared fetch helper when introduced).
+- Browser GETs to `/api/*` must use [`lib/api.ts`](../../lib/api.ts) `apiGet` (checks `res.ok`; throws `ApiError`).
+- Handle mutation `onError` (same toast `id` as loading) so Sonner toasts do not stick.
+- After mutations, invalidate related keys (`overview`, `transactions`, `categories`, `userSettings`).
 - No `console.log` in render paths for production features.
 
 ---

@@ -70,7 +70,7 @@ function CreateTransactionDialog({ trigger, type }: Props) {
 
   const { mutate, isPending } = useMutation({
     mutationFn: CreateTransaction,
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Transaction created successfully 🎉", {
         id: "create-transaction",
       });
@@ -83,12 +83,17 @@ function CreateTransactionDialog({ trigger, type }: Props) {
         category: undefined,
       });
 
-      // After creating a transaction, we need to invalidate the overview query which will refetch data in the homepage
-      queryClient.invalidateQueries({
-        queryKey: ["overview"],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["overview"] }),
+        queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+      ]);
 
       setOpen((prev) => !prev);
+    },
+    onError: () => {
+      toast.error("Something went wrong", {
+        id: "create-transaction",
+      });
     },
   });
 

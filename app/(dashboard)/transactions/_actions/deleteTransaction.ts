@@ -1,19 +1,21 @@
 "use server";
 
+import { requireActionUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+import { DeleteTransactionIdSchema } from "@/schema/transaction";
 
 export async function DeleteTransaction(id: string) {
-  const user = await currentUser();
-  if (!user) {
-    redirect("/sign-in");
+  const parsedId = DeleteTransactionIdSchema.safeParse(id);
+  if (!parsedId.success) {
+    throw new Error("bad request");
   }
+
+  const user = await requireActionUser();
 
   const transaction = await prisma.transaction.findUnique({
     where: {
       userId: user.id,
-      id,
+      id: parsedId.data,
     },
   });
 
@@ -22,14 +24,12 @@ export async function DeleteTransaction(id: string) {
   }
 
   await prisma.$transaction([
-    // Delete transaction from db
     prisma.transaction.delete({
       where: {
-        id,
+        id: parsedId.data,
         userId: user.id,
       },
     }),
-    // Update month history
     prisma.monthHistory.update({
       where: {
         day_month_year_userId: {
@@ -52,7 +52,6 @@ export async function DeleteTransaction(id: string) {
         }),
       },
     }),
-    // Update year history
     prisma.yearHistory.update({
       where: {
         month_year_userId: {

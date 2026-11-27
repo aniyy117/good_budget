@@ -1,29 +1,27 @@
 "use server";
 
+import { requireActionUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import {
   CreateTransactionSchema,
   CreateTransactionSchemaType,
 } from "@/schema/transaction";
-import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 
 export async function CreateTransaction(form: CreateTransactionSchemaType) {
   const parsedBody = CreateTransactionSchema.safeParse(form);
   if (!parsedBody.success) {
-    throw new Error(parsedBody.error.message);
+    throw new Error("bad request");
   }
 
-  const user = await currentUser();
-  if (!user) {
-    redirect("/sign-in");
-  }
+  const user = await requireActionUser();
 
   const { amount, category, date, description, type } = parsedBody.data;
+  // Scope category by user + name + type (prevents cross-type icon/name mixups).
   const categoryRow = await prisma.category.findFirst({
     where: {
       userId: user.id,
       name: category,
+      type,
     },
   });
 
@@ -34,7 +32,6 @@ export async function CreateTransaction(form: CreateTransactionSchemaType) {
   // NOTE: don't make confusion between $transaction ( prisma ) and prisma.transaction (table)
 
   await prisma.$transaction([
-    // Create user transaction
     prisma.transaction.create({
       data: {
         userId: user.id,
@@ -47,7 +44,6 @@ export async function CreateTransaction(form: CreateTransactionSchemaType) {
       },
     }),
 
-    // Update month aggregate table
     prisma.monthHistory.upsert({
       where: {
         day_month_year_userId: {
@@ -75,7 +71,6 @@ export async function CreateTransaction(form: CreateTransactionSchemaType) {
       },
     }),
 
-    // Update year aggreate
     prisma.yearHistory.upsert({
       where: {
         month_year_userId: {

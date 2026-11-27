@@ -1,8 +1,8 @@
 # Application Architecture
 
 **Status:** Living document  
-**Last verified:** 27 November 2026  
-**Current runtime:** Next.js 14.2.3 App Router  
+**Last verified:** 27 November 2026 (post WP3)  
+**Current runtime:** Next.js 14.2.35 App Router  
 **Target runtime:** Next.js 16 (phased; not deployed yet)
 
 Related: [`AGENTS.md`](../../AGENTS.md) · [`TECH_STACK.md`](./TECH_STACK.md) · [Audit](../audit/NEXTJS_APPLICATION_AUDIT.md)
@@ -60,8 +60,8 @@ Route groups `(auth)` and `(dashboard)` do not appear in the URL.
 ```text
 app/layout.tsx          ClerkProvider, Inter, Toaster, RootProviders
 ├── (auth)/layout.tsx   Centered Logo shell
-├── (dashboard)/layout.tsx  Navbar + children (no auth gate today)
-└── wizard/layout.tsx   Centered shell
+├── (dashboard)/layout.tsx  Navbar + children + requirePageAuth()
+└── wizard/layout.tsx   Centered shell + requirePageAuth()
 ```
 
 ### 2.4 Write path (mutations)
@@ -73,11 +73,11 @@ Server Actions under:
 - `app/(dashboard)/transactions/_actions/deleteTransaction.ts` — `DeleteTransaction`
 - `app/wizard/_actions/userSettings.ts` — `UpdateUserCurrency`
 
-Pattern: `"use server"` → Zod `safeParse` → `currentUser()` → Prisma (often `$transaction` with history aggregates).
+Pattern: `"use server"` → Zod `safeParse` → `requireActionUser()` → Prisma (often `$transaction` with history aggregates).
 
 ### 2.5 Read path
 
-Client components call `fetch('/api/...')` via TanStack Query.
+Client components call [`apiGet`](../../lib/api.ts) (`/api/...`) via TanStack Query. Handlers authenticate with `requireApiUserId()` and return **401 JSON** when signed out.
 
 | Endpoint | Role |
 |----------|------|

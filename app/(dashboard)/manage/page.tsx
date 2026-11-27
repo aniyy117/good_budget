@@ -14,9 +14,9 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { TransactionType } from "@/lib/types";
+import { apiGet } from "@/lib/api";
+import type { Category, TransactionType } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { Category } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { PlusSquare, TrashIcon, TrendingDown, TrendingUp } from "lucide-react";
 import React from "react";
@@ -60,8 +60,7 @@ export default page;
 function CategoryList({ type }: { type: TransactionType }) {
   const categoriesQuery = useQuery({
     queryKey: ["categories", type],
-    queryFn: () =>
-      fetch(`/api/categories?type=${type}`).then((res) => res.json()),
+    queryFn: () => apiGet<Category[]>(`/api/categories?type=${type}`),
   });
 
   const dataAvailable = categoriesQuery.data && categoriesQuery.data.length > 0;

@@ -6,7 +6,9 @@ Related: [Audit](../audit/NEXTJS_APPLICATION_AUDIT.md) · [`EXECUTION_PLAN.md`](
 
 **Phase 0 update (27 November 2026):** Risks R1–R2 **re-confirmed with evidence** (Next was 14.2.3; HTTP 200 on `/manage` and `/transactions` without auth). Hosting resolved as **Vercel-linked**. Live DB readable (189 transactions). Interactive authenticated QA still outstanding (R11 residual).
 
-**WP1 update (27 November 2026):** Next upgraded to **14.2.35** (latest 14.2.x). R1 **partially mitigated** for 14.2-line patches (including Dec 2025 RSC DoS floor). Residual `npm audit` Next findings remain until a **15.5+/16** upgrade (R7 path). R2 **unchanged** — still requires WP2. See [`WP1_NEXTJS_SECURITY_UPGRADE_REPORT.md`](./WP1_NEXTJS_SECURITY_UPGRADE_REPORT.md).
+**WP1 update (27 November 2026):** Next upgraded to **14.2.35** (latest 14.2.x). R1 **partially mitigated** for 14.2-line patches (including Dec 2025 RSC DoS floor). Residual `npm audit` Next findings remain until a **15.5+/16** upgrade (R7 path). See [`WP1_NEXTJS_SECURITY_UPGRADE_REPORT.md`](./WP1_NEXTJS_SECURITY_UPGRADE_REPORT.md).
+
+**WP2 update (27 November 2026):** R2 **mitigated** — middleware + layouts redirect unauthenticated users; `/manage`/`/transactions` no longer return 200 logged out; APIs return 401 JSON. R5 (category type) mitigated. R3 partially addressed on server (401); client fetch helper still WP3. Dual-user IDOR lab still outstanding. See [`WP2_AUTHENTICATION_AUTHORIZATION_REPORT.md`](./WP2_AUTHENTICATION_AUTHORIZATION_REPORT.md).
 
 ---
 
@@ -15,10 +17,10 @@ Related: [Audit](../audit/NEXTJS_APPLICATION_AUDIT.md) · [`EXECUTION_PLAN.md`](
 | ID | Risk | Likelihood | Impact | Phase | Mitigation |
 |----|------|------------|--------|-------|------------|
 | R1 | Exploitation of known Next CVEs | Medium (14.2 floor done; residual majors remain) | High | 1→3 | **WP1 done (14.2.35)**; clear remaining via Stage B/C major upgrade |
-| R2 | Unauthenticated dashboard shells | High (if middleware open) | Medium–High | 1 | Middleware protect + layout auth (SEC-02/03) |
-| R3 | Client fetch breaks when APIs stop redirecting | Medium | Medium | 1 | Ship fetch helper with 401 handling in same WP |
+| R2 | Unauthenticated dashboard shells | Low (mitigated WP2) | Medium–High | 1 | **WP2 done** — re-test after Clerk upgrades |
+| R3 | Client fetch breaks when APIs stop redirecting | Medium | Medium | 1–3 | Server returns 401 (WP2); add client `res.ok` helper in WP3 |
 | R4 | Aggregate drift (history tables) | Medium | Medium | 1–2 | Keep `$transaction`; add tests; optional reconcile job later |
-| R5 | Wrong category type on create | Medium | Medium | 1 | Filter by type (BUG-02) |
+| R5 | Wrong category type on create | Low (mitigated WP2) | Medium | 1 | **WP2 done** — filter by type |
 | R6 | Onboarding auto-creates INR via GET | High | Low–Medium | 2 | Mutation-only create (BUG-01) |
 | R7 | Next 16 + React 19 + Clerk simultaneous breakages | High if unstaged | High | 3 | Staged upgrades; smoke E2E; rollback tag |
 | R8 | Middleware/proxy rename mistakes on Next 16 | Medium | High | 3 | Follow official guide; keep auth tests |

@@ -62,11 +62,11 @@ Related: [`MODERNIZATION_ROADMAP.md`](./MODERNIZATION_ROADMAP.md) · [Audit issu
 
 | | |
 |--|--|
-| **Status** | Pending |
-| **Files** | `middleware.ts`, `app/(dashboard)/layout.tsx` |
-| **Actions** | Public matcher for sign-in/up; `auth.protect()` elsewhere; server gate in dashboard layout |
-| **Exit** | Unauthenticated users cannot use dashboard HTML or APIs |
-| **Audit** | SEC-02, SEC-03 |
+| **Status** | **Completed** (27 November 2026) — see [`WP2_AUTHENTICATION_AUTHORIZATION_REPORT.md`](./WP2_AUTHENTICATION_AUTHORIZATION_REPORT.md) |
+| **Files** | `middleware.ts`, `lib/auth.ts`, dashboard/wizard layouts, all `app/api/**`, Server Actions, Vitest security tests |
+| **Actions** | Public matcher; page `redirectToSignIn`; layout `requirePageAuth`; API **401** JSON; action `requireActionUser`; category `type` filter; UUID delete validation |
+| **Exit** | Met: unauthenticated `/transactions`/`/manage` → 307 sign-in; APIs → 401 JSON; lint/tsc/build + 6 Vitest tests pass |
+| **Audit** | SEC-02, SEC-03, SEC-04 addressed; BUG-02 addressed early |
 
 ---
 
@@ -74,11 +74,11 @@ Related: [`MODERNIZATION_ROADMAP.md`](./MODERNIZATION_ROADMAP.md) · [Audit issu
 
 | | |
 |--|--|
-| **Status** | Pending |
-| **Files** | All `app/api/**/route.ts`; client query `queryFn`s; create/delete dialogs |
-| **Actions** | Replace auth `redirect` with 401 JSON; shared `apiGet`; invalidate overview/transactions/history/userSettings; add `onError` |
-| **Exit** | Failed auth/mutations show toasts; no stuck loading toasts |
-| **Audit** | SEC-04, API-01, BUG-03, QUAL-01, BUG-13, BUG-16 |
+| **Status** | **Completed** (27 November 2026) — see [`WP3_CLIENT_FETCH_MUTATION_HYGIENE_REPORT.md`](./WP3_CLIENT_FETCH_MUTATION_HYGIENE_REPORT.md) |
+| **Files** | `lib/api.ts`; client query `queryFn`s; create/delete transaction dialogs; `CurrencyComboBox` |
+| **Actions** | Shared `apiGet` (res.ok); invalidate `overview` + `transactions` on create/delete; create `onError`; currency invalidate + `router.refresh()`; API 401 / BUG-16 already from WP2 |
+| **Exit** | Met: no raw client `/api` fetch; failed create toast replaces loading; cross-view invalidation |
+| **Audit** | API-01, BUG-03, BUG-04/QUAL-01, BUG-13 addressed; SEC-04 + BUG-16 confirmed via WP2 |
 
 ---
 
@@ -86,10 +86,10 @@ Related: [`MODERNIZATION_ROADMAP.md`](./MODERNIZATION_ROADMAP.md) · [Audit issu
 
 | | |
 |--|--|
-| **Status** | Pending |
+| **Status** | **Completed early in WP2** (no further code required) |
 | **Files** | `app/(dashboard)/_actions/transactions.ts` |
 | **Actions** | Include `type` in category `findFirst` |
-| **Exit** | Income/expense categories cannot cross-attach |
+| **Exit** | Met in WP2 — income/expense categories cannot cross-attach |
 | **Audit** | BUG-02 |
 
 ---

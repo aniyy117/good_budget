@@ -1,6 +1,6 @@
 # Testing Strategy
 
-**Current state:** No unit, integration, or E2E tests. No CI workflows.  
+**Current state:** Minimal Vitest suite for security validation schemas (`npm test`). No E2E/CI yet.  
 **Target:** Layered tests + CI gates before claiming production readiness (modernization Phase 5).
 
 Related: [`AGENTS.md`](../../AGENTS.md) · [`EXECUTION_PLAN.md`](../modernization/EXECUTION_PLAN.md)

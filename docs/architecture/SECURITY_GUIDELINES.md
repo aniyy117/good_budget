@@ -1,6 +1,6 @@
 # Security Guidelines
 
-Related: [`AGENTS.md`](../../AGENTS.md) · [Audit](../audit/NEXTJS_APPLICATION_AUDIT.md) · [`MIGRATION_RISK_ASSESSMENT.md`](../modernization/MIGRATION_RISK_ASSESSMENT.md)
+Related: [`AGENTS.md`](../../AGENTS.md) · [Audit](../audit/NEXTJS_APPLICATION_AUDIT.md) · [`WP2_AUTHENTICATION_AUTHORIZATION_REPORT.md`](../modernization/WP2_AUTHENTICATION_AUTHORIZATION_REPORT.md) · [`MIGRATION_RISK_ASSESSMENT.md`](../modernization/MIGRATION_RISK_ASSESSMENT.md)
 
 ---
 
@@ -15,20 +15,22 @@ Related: [`AGENTS.md`](../../AGENTS.md) · [Audit](../audit/NEXTJS_APPLICATION_A
 
 ---
 
-## Clerk integration
+## Clerk integration (current — post WP2)
 
-### Current
+**SDK:** `@clerk/nextjs@5.0.3` on Next.js **14.2.35** (`middleware.ts`, not `proxy.ts`).
 
-- `ClerkProvider` in `app/layout.tsx`.
-- `clerkMiddleware()` in `middleware.ts` **without** route protection.
-- `currentUser()` checks in some RSC pages, all API routes, and Server Actions.
-- Gaps: `/manage` and `/transactions` lack server-side auth gates (audit SEC-02 / SEC-03).
+| Layer | Behavior |
+|-------|----------|
+| Middleware | Public: `/sign-in`, `/sign-up`. Private pages: `redirectToSignIn()` if no `userId`. `/api/*` not redirected here. |
+| Layouts | `requirePageAuth()` in dashboard + wizard layouts (redirect `/sign-in`). |
+| Route Handlers | `requireApiUserId()` → **401** `{ "error": "Unauthorized" }`. |
+| Server Actions | `requireActionUser()` → throw `"Unauthorized"` if signed out. |
 
-### Required for new work / Phase 1
+Helpers live in [`lib/auth.ts`](../../lib/auth.ts).
 
-- Configure public routes (`/sign-in`, `/sign-up`, static assets) and protect everything else via Clerk middleware (`auth.protect()` or current Clerk-recommended equivalent).
-- Add a server auth check in `app/(dashboard)/layout.tsx` (defense in depth).
-- Keep using official `@clerk/nextjs` server APIs; avoid decoding session cookies manually.
+**Note:** In Clerk 5.0.3, `auth().protect()` for document requests can surface as **404**. Prefer redirect helpers for page UX unless product intentionally wants not-found.
+
+Do not decode session cookies manually. Do not trust client-supplied user ids.
 
 ---
 
@@ -36,12 +38,12 @@ Related: [`AGENTS.md`](../../AGENTS.md) · [Audit](../audit/NEXTJS_APPLICATION_A
 
 Every Prisma read/write/delete for tenant data **must** include `userId: user.id` (or a unique constraint that embeds `userId`).
 
-Examples of correct patterns already in the codebase:
+Required patterns:
 
 - Category delete via `name_userId_type`.
-- Transaction delete with ownership check before aggregate updates.
-
-When creating transactions, look up categories by **`userId` + `name` + `type`** (audit BUG-02).
+- Transaction delete: ownership check before aggregate updates.
+- Transaction create: category lookup by **`userId` + `name` + `type`**.
+- Stats/history APIs: always query with the authenticated `userId`.
 
 ---
 
@@ -49,14 +51,13 @@ When creating transactions, look up categories by **`userId` + `name` + `type`**
 
 | Rule | Detail |
 |------|--------|
-| Auth | Reject unauthenticated callers |
-| API response | Prefer `401` JSON for Route Handlers used by `fetch`; do not `redirect` HTML to XHR clients |
-| Validation | Zod on bodies and query params |
-| Delete IDs | Validate UUID (or actual id format) before Prisma |
-| Errors | Stable client messages; log details server-side |
-| CSRF | Rely on Next Server Action origin checks; keep Next patched |
+| Auth | `requireActionUser` / `requireApiUserId` |
+| API response | **401 JSON** for unauthenticated handlers — never HTML redirect |
+| Validation | Zod before mutations; UUID for delete transaction ids |
+| Errors | Stable client messages (`bad request`, `Unauthorized`); avoid dumping Zod trees |
+| CSRF | Next Server Action origin checks; keep Next patched |
 
-Do not introduce state-changing **GET** endpoints. Settings creation belongs in a mutation (audit BUG-01).
+Do not introduce new state-changing **GET** endpoints. Existing create-on-GET for user-settings is legacy (BUG-01 / WP5).
 
 ---
 
@@ -70,9 +71,10 @@ Do not introduce state-changing **GET** endpoints. Settings creation belongs in 
 | `POSTGRES_URL_NON_POOLING` | Server | Direct DB |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Public | Clerk browser |
 | `CLERK_SECRET_KEY` | Server | Clerk server |
+| `NEXT_PUBLIC_CLERK_SIGN_IN_URL` / `SIGN_UP_URL` / after-sign URLs | Public | Clerk routing |
 | `NODE_ENV` | Runtime | Prisma singleton behavior |
 
-`.env` / `.env.local` stay gitignored. Provide `.env.example` with empty placeholders when adding onboarding docs (no real secrets).
+`.env` / `.env.local` stay gitignored.
 
 ---
 
@@ -80,14 +82,14 @@ Do not introduce state-changing **GET** endpoints. Settings creation belongs in 
 
 - Do not log full transaction dumps in production.
 - Preserve aggregate consistency (`$transaction`).
-- Plan money type migration carefully (Float → Decimal/cents) to avoid silent corruption — see [`DATABASE_MIGRATION_PLAN.md`](../modernization/DATABASE_MIGRATION_PLAN.md).
+- Plan money type migration carefully (Float → Decimal/cents) — see [`DATABASE_MIGRATION_PLAN.md`](../modernization/DATABASE_MIGRATION_PLAN.md).
 - Export CSV only for the authenticated user’s filtered rows.
 
 ---
 
 ## Dependency security
 
-- Next **14.2.3** is below patched 14.2.x releases (audit SEC-01). Prioritize upgrade when dependency work is approved.
+- Next is on **14.2.35** (WP1). Residual Next advisories require 15.5+/16 later.
 - Re-run `npm audit` after upgrades; do not blindly `npm audit fix --force`.
 - Keep React Query Devtools out of production UI.
 
@@ -95,9 +97,9 @@ Do not introduce state-changing **GET** endpoints. Settings creation belongs in 
 
 ## Checklist for agents (security)
 
-- [ ] Auth check present
+- [ ] Auth check present (`requirePageAuth` / `requireApiUserId` / `requireActionUser`)
 - [ ] `userId` filter on every query
 - [ ] Zod validation
 - [ ] No secrets in client or docs
-- [ ] API errors appropriate for client type
+- [ ] API errors are 401 JSON for unauthenticated callers
 - [ ] No new side-effecting GETs

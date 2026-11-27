@@ -12,15 +12,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { TransactionType } from "@/lib/types";
-import { Category } from "@prisma/client";
+import type { CategoryIdentity, TransactionType } from "@/lib/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { ReactNode } from "react";
 import { toast } from "sonner";
 
 interface Props {
   trigger: ReactNode;
-  category: Category;
+  category: CategoryIdentity;
 }
 
 function DeleteCategoryDialog({ category, trigger }: Props) {

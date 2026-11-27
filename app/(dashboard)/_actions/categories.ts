@@ -1,5 +1,6 @@
 "use server";
 
+import { requireActionUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import {
   CreateCategorySchema,
@@ -7,8 +8,6 @@ import {
   DeleteCategorySchema,
   DeleteCategorySchemaType,
 } from "@/schema/categories";
-import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 
 export async function CreateCategory(form: CreateCategorySchemaType) {
   const parsedBody = CreateCategorySchema.safeParse(form);
@@ -16,10 +15,7 @@ export async function CreateCategory(form: CreateCategorySchemaType) {
     throw new Error("bad request");
   }
 
-  const user = await currentUser();
-  if (!user) {
-    redirect("/sign-in");
-  }
+  const user = await requireActionUser();
 
   const { name, icon, type } = parsedBody.data;
   return await prisma.category.create({
@@ -38,10 +34,7 @@ export async function DeleteCategory(form: DeleteCategorySchemaType) {
     throw new Error("bad request");
   }
 
-  const user = await currentUser();
-  if (!user) {
-    redirect("/sign-in");
-  }
+  const user = await requireActionUser();
 
   return await prisma.category.delete({
     where: {

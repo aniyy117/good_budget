@@ -1,31 +1,29 @@
+import { requireApiUserId } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
-export async function GET(request: Request) {
-  const user = await currentUser();
-
-  if (!user) {
-    redirect("/sign-in");
+export async function GET(_request: Request) {
+  const authResult = requireApiUserId();
+  if (authResult.error) {
+    return authResult.error;
   }
 
   let userSettings = await prisma.userSettings.findUnique({
     where: {
-      userId: user.id,
+      userId: authResult.userId,
     },
   });
 
+  // Existing product behavior (create-on-GET) preserved; tracked as BUG-01 for WP5.
   if (!userSettings) {
     userSettings = await prisma.userSettings.create({
       data: {
-        userId: user.id,
+        userId: authResult.userId,
         currency: "INR",
       },
     });
   }
 
-  // Revalidate the home page that uses the user currency
   revalidatePath("/");
   return Response.json(userSettings);
 }

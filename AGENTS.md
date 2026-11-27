@@ -61,19 +61,19 @@ Browser
        └─ /api/*              GET Route Handlers (Prisma + Clerk)
 
 Writes: Client → Server Actions → Prisma (+ MonthHistory / YearHistory aggregates)
-Reads:  Client → React Query → GET /api/* → Prisma
+Reads:  Client → React Query → apiGet → GET /api/* → Prisma
 ```
 
 Details: [`docs/architecture/APPLICATION_ARCHITECTURE.md`](docs/architecture/APPLICATION_ARCHITECTURE.md).
 
-### Authentication and authorization (current)
+### Authentication and authorization (current — post WP2)
 
-- Clerk via `ClerkProvider`, `clerkMiddleware()` in [`middleware.ts`](middleware.ts).
-- **Gap:** middleware does **not** call `auth.protect()`; protection is ad hoc via `currentUser()` in some pages/APIs/actions.
-- `/manage` and `/transactions` are client-only pages without a server auth gate.
-- Data isolation: Prisma queries must always filter by Clerk `user.id`.
+- Clerk via `ClerkProvider` and [`middleware.ts`](middleware.ts): public `/sign-in`/`/sign-up`; private pages use `redirectToSignIn()`.
+- Shared helpers in [`lib/auth.ts`](lib/auth.ts): `requirePageAuth`, `requireApiUserId` (401 JSON), `requireActionUser`.
+- Dashboard and wizard layouts re-check auth (defense in depth).
+- Data isolation: Prisma queries must always filter by Clerk `user.id` (category lookups include `type`).
 
-Target behavior: edge protection + dashboard layout auth. See [`docs/architecture/SECURITY_GUIDELINES.md`](docs/architecture/SECURITY_GUIDELINES.md).
+See [`docs/architecture/SECURITY_GUIDELINES.md`](docs/architecture/SECURITY_GUIDELINES.md) · [`docs/modernization/WP2_AUTHENTICATION_AUTHORIZATION_REPORT.md`](docs/modernization/WP2_AUTHENTICATION_AUTHORIZATION_REPORT.md).
 
 ### Database and data access
 
@@ -107,7 +107,7 @@ Audit findings (issue IDs): [`docs/audit/NEXTJS_APPLICATION_AUDIT.md`](docs/audi
 ### Server Actions vs Route Handlers
 
 - **Mutations:** Server Actions (`"use server"`) with Zod validation.
-- **Reads:** Today via GET Route Handlers + React Query. Prefer server-side fetches where they reduce waterfalls, without breaking UX.
+- **Reads:** Today via GET Route Handlers + React Query (`lib/api.ts` `apiGet`). Prefer server-side fetches where they reduce waterfalls, without breaking UX.
 - Do not add POST API routes that duplicate existing Server Actions without reason.
 
 ### Data fetching and caching
@@ -217,6 +217,7 @@ Every agent must:
 | [docs/modernization/MODERNIZATION_ROADMAP.md](docs/modernization/MODERNIZATION_ROADMAP.md) | Phases and status |
 | [docs/modernization/PHASE_0_BASELINE_REPORT.md](docs/modernization/PHASE_0_BASELINE_REPORT.md) | Phase 0 verified baseline |
 | [docs/modernization/WP1_NEXTJS_SECURITY_UPGRADE_REPORT.md](docs/modernization/WP1_NEXTJS_SECURITY_UPGRADE_REPORT.md) | WP1 Next 14.2.35 security patch |
+| [docs/modernization/WP2_AUTHENTICATION_AUTHORIZATION_REPORT.md](docs/modernization/WP2_AUTHENTICATION_AUTHORIZATION_REPORT.md) | WP2 auth hardening |
 | [docs/modernization/EXECUTION_PLAN.md](docs/modernization/EXECUTION_PLAN.md) | Ordered work packages |
 | [docs/modernization/DEPENDENCY_COMPATIBILITY_REPORT.md](docs/modernization/DEPENDENCY_COMPATIBILITY_REPORT.md) | Next 14 → 16 compatibility |
 | [docs/modernization/MIGRATION_RISK_ASSESSMENT.md](docs/modernization/MIGRATION_RISK_ASSESSMENT.md) | Risks and mitigations |
