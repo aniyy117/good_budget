@@ -37,7 +37,7 @@ Related: [`AGENTS.md`](../../AGENTS.md) · [`DEPENDENCY_COMPATIBILITY_REPORT.md`
 
 **Optional FX:** `FX_API_BASE_URL`
 
-**Node:** Prefer Node **26 LTS** (Active LTS; see `.nvmrc`). Node 20 is EOL.
+**Node:** Prefer Node **26 LTS** (`engines.node`: `26.x`, `.nvmrc`). Node 20 is EOL.
 
 **Lint:** `npm run lint` → `eslint .` (flat `eslint.config.mjs`). `next lint` removed in Next 16.
 
