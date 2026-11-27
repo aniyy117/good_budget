@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# GoodBudget
 
-## Getting Started
+Personal finance tracker: income and expenses, categories, overview stats, history charts, and a filterable transactions table.
 
-First, run the development server:
+## Stack (current)
+
+- **Next.js 14.2.3** (App Router) · **React 18** · **TypeScript**
+- **Clerk** authentication
+- **Prisma** + **PostgreSQL**
+- **TanStack Query** · **Zod** · **Tailwind CSS** · **shadcn/ui**
+
+**Modernization target:** Next.js **16** (phased). See [docs/modernization/MODERNIZATION_ROADMAP.md](docs/modernization/MODERNIZATION_ROADMAP.md).
+
+## AI / contributor instructions
+
+**Start here:** [AGENTS.md](AGENTS.md)
+
+| Doc | Purpose |
+|-----|---------|
+| [docs/audit/NEXTJS_APPLICATION_AUDIT.md](docs/audit/NEXTJS_APPLICATION_AUDIT.md) | Full technical audit |
+| [docs/architecture/](docs/architecture/) | Architecture, stack, standards, security, testing |
+| [docs/modernization/](docs/modernization/) | Roadmap, execution plan, risks, DB migration plan |
+
+## Getting started
+
+### Prerequisites
+
+- Node.js **20 LTS** recommended
+- PostgreSQL database (e.g. Vercel Postgres / Neon)
+- Clerk application credentials
+
+### Install
+
+```bash
+npm ci
+```
+
+`postinstall` runs `prisma generate`.
+
+### Environment
+
+Create `.env.local` (gitignored) with at least:
+
+```bash
+# Database (names only — fill with your values)
+POSTGRES_PRISMA_URL=
+POSTGRES_URL_NON_POOLING=
+
+# Clerk
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+```
+
+Optional: `vercel link` then `vercel env pull .env.local` if the project is linked on Vercel.
+
+### Develop
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run lint` | ESLint |
+| `npm run prisma-studio` | Prisma Studio |
 
-## Learn More
+## App routes
 
-To learn more about Next.js, take a look at the following resources:
+| Path | Description |
+|------|-------------|
+| `/sign-in`, `/sign-up` | Clerk auth |
+| `/wizard` | Currency onboarding |
+| `/` | Dashboard overview + history |
+| `/transactions` | Transaction table |
+| `/manage` | Currency + categories |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Private project (`package.json` `"private": true`).

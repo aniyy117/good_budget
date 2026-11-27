@@ -1,4 +1,4 @@
-import { PiggyBank , Coins} from "lucide-react";
+import { Coins } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 

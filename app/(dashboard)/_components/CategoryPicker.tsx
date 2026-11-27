@@ -15,12 +15,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { TransactionType } from "@/lib/types";
+import { apiGet } from "@/lib/api";
+import type { CategoryOption, TransactionType } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { Category } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { Check, ChevronsUpDown } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 
 interface Props {
   type: TransactionType;
@@ -31,28 +31,29 @@ function CategoryPicker({ type, onChange }: Props) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
-  useEffect(() => {
-    if (!value) return;
-    // when the value changes, call onChange callback
-    onChange(value);
-  }, [onChange, value]);
-
   const categoriesQuery = useQuery({
     queryKey: ["categories", type],
-    queryFn: () =>
-      fetch(`/api/categories?type=${type}`).then((res) => res.json()),
+    queryFn: () => apiGet<CategoryOption[]>(`/api/categories?type=${type}`),
   });
 
   const selectedCategory = categoriesQuery.data?.find(
-    (category: Category) => category.name === value
+    (category: CategoryOption) => category.name === value
+  );
+
+  const selectCategory = useCallback(
+    (name: string) => {
+      setValue(name);
+      onChange(name);
+      setOpen(false);
+    },
+    [onChange]
   );
 
   const successCallback = useCallback(
-    (category: Category) => {
-      setValue(category.name);
-      setOpen((prev) => !prev);
+    (category: CategoryOption) => {
+      selectCategory(category.name);
     },
-    [setValue, setOpen]
+    [selectCategory]
   );
 
   return (
@@ -89,12 +90,11 @@ function CategoryPicker({ type, onChange }: Props) {
           <CommandGroup>
             <CommandList>
               {categoriesQuery.data &&
-                categoriesQuery.data.map((category: Category) => (
+                categoriesQuery.data.map((category: CategoryOption) => (
                   <CommandItem
                     key={category.name}
                     onSelect={() => {
-                      setValue(category.name);
-                      setOpen((prev) => !prev);
+                      selectCategory(category.name);
                     }}
                   >
                     <CategoryRow category={category} />
@@ -116,7 +116,7 @@ function CategoryPicker({ type, onChange }: Props) {
 
 export default CategoryPicker;
 
-function CategoryRow({ category }: { category: Category }) {
+function CategoryRow({ category }: { category: CategoryOption }) {
   return (
     <div className="flex items-center gap-2">
       <span role="img">{category.icon}</span>

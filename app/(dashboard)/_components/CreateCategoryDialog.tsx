@@ -35,11 +35,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CircleOff, Loader2, PlusSquare } from "lucide-react";
 import React, { ReactNode, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import Picker from "@emoji-mart/react";
-import data from "@emoji-mart/data";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CreateCategory } from "@/app/(dashboard)/_actions/categories";
-import { Category } from "@prisma/client";
+import EmojiPickerPanel from "@/app/(dashboard)/_components/EmojiPickerPanel";
+import type { Category } from "@/lib/types";
 import { toast } from "sonner";
 import { useTheme } from "next-themes";
 
@@ -164,12 +163,15 @@ function CreateCategoryDialog({ type, successCallback, trigger }: Props) {
                 <FormItem>
                   <FormLabel>Icon</FormLabel>
                   <FormControl>
-                    <Popover open={isOpenEmojiPicker}>
+                    <Popover
+                      open={isOpenEmojiPicker}
+                      onOpenChange={setIsOpenEmojiPicker}
+                    >
                       <PopoverTrigger asChild>
                         <Button
                           variant={"outline"}
                           className="h-[100px] w-full"
-                          onClick={() => setIsOpenEmojiPicker((prev) => !prev)}
+                          type="button"
                         >
                           {form.watch("icon") ? (
                             <div className="flex flex-col items-center gap-2">
@@ -191,15 +193,12 @@ function CreateCategoryDialog({ type, successCallback, trigger }: Props) {
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-full translate-y-[18rem] md:translate-y-[0rem]">
-                        <Picker
-                          data={data}
+                        <EmojiPickerPanel
                           theme={theme.resolvedTheme}
-                          onEmojiSelect={(emoji: { native: string }) => {
+                          onEmojiSelect={(emoji) => {
                             field.onChange(emoji.native);
-                            setIsOpenEmojiPicker((prev) => !prev);
+                            setIsOpenEmojiPicker(false);
                           }}
-                          navPosition="bottom"
-                          previewPosition="bottom"
                         />
                       </PopoverContent>
                     </Popover>

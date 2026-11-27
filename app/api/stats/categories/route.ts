@@ -1,13 +1,15 @@
+import { requireApiUserId } from "@/lib/auth";
+import { toNumber } from "@/lib/money";
 import prisma from "@/lib/prisma";
+import type { CategoryStatsRow } from "@/lib/types";
 import { OverviewQuerySchema } from "@/schema/overview";
-import { currentUser } from "@clerk/nextjs/server";
-// import { Return } from "@prisma/client/runtime/library";
-import { redirect } from "next/navigation";
+
+export type { CategoryStatsRow };
 
 export async function GET(request: Request) {
-  const user = await currentUser();
-  if (!user) {
-    redirect("/sign-in");
+  const authResult = await requireApiUserId();
+  if (authResult.error) {
+    return authResult.error;
   }
 
   const { searchParams } = new URL(request.url);
@@ -16,11 +18,11 @@ export async function GET(request: Request) {
 
   const queryParams = OverviewQuerySchema.safeParse({ from, to });
   if (!queryParams.success) {
-    throw new Error(queryParams.error.message);
+    return Response.json({ error: "Invalid date range" }, { status: 400 });
   }
 
   const stats = await getCategoriesStats(
-    user.id,
+    authResult.userId,
     queryParams.data.from,
     queryParams.data.to
   );
@@ -31,9 +33,13 @@ export type GetCategoriesStatsResponseType = Awaited<
   ReturnType<typeof getCategoriesStats>
 >;
 
-async function getCategoriesStats(userId: string, from: Date, to: Date) {
+async function getCategoriesStats(
+  userId: string,
+  from: Date,
+  to: Date
+): Promise<CategoryStatsRow[]> {
   const stats = await prisma.transaction.groupBy({
-    by: ["type", "category", "categoryIcon"],
+    by: ["type", "category", "categoryIcon"] as const,
     where: {
       userId,
       date: {
@@ -42,14 +48,21 @@ async function getCategoriesStats(userId: string, from: Date, to: Date) {
       },
     },
     _sum: {
-      amount: true,
+      amountInBase: true,
     },
     orderBy: {
       _sum: {
-        amount: "desc",
+        amountInBase: "desc",
       },
     },
   });
 
-  return stats;
+  return stats.map((row) => ({
+    type: row.type,
+    category: row.category,
+    categoryIcon: row.categoryIcon,
+    _sum: {
+      amount: toNumber(row._sum.amountInBase),
+    },
+  }));
 }

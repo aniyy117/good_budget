@@ -1,31 +1,18 @@
+import { requireApiUserId } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { currentUser } from "@clerk/nextjs/server";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
-export async function GET(request: Request) {
-  const user = await currentUser();
-
-  if (!user) {
-    redirect("/sign-in");
+export async function GET(_request: Request) {
+  const authResult = await requireApiUserId();
+  if (authResult.error) {
+    return authResult.error;
   }
 
-  let userSettings = await prisma.userSettings.findUnique({
+  const userSettings = await prisma.userSettings.findUnique({
     where: {
-      userId: user.id,
+      userId: authResult.userId,
     },
   });
 
-  if (!userSettings) {
-    userSettings = await prisma.userSettings.create({
-      data: {
-        userId: user.id,
-        currency: "INR",
-      },
-    });
-  }
-
-  // Revalidate the home page that uses the user currency
-  revalidatePath("/");
+  // Read-only: missing settings means onboarding is incomplete (WP5 / BUG-01).
   return Response.json(userSettings);
 }

@@ -1,16 +1,11 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  //provider = "sqlite"
-  //url      = "file:./dev.db"
   provider  = "postgresql"
   url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
@@ -34,16 +29,22 @@ model Category {
 model Transaction {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  updateAt  DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
-  amount      Float
-  description String
-  date        DateTime
-  userId      String
-  type        String   @default("income")
+  amount       Decimal  @db.Decimal(18, 2)
+  currency     String   @default("INR")
+  amountInBase Decimal  @default(0) @db.Decimal(18, 2)
+  fxRate       Decimal  @default(1) @db.Decimal(18, 8)
+  fxRateAt     DateTime @default(now())
+  description  String
+  date         DateTime
+  userId       String
+  type         String   @default("income")
 
   category     String
   categoryIcon String
+
+  @@index([userId, date])
 }
 
 model MonthHistory {
@@ -51,8 +52,8 @@ model MonthHistory {
   day     Int
   month   Int
   year    Int
-  income  Float
-  expense Float
+  income  Decimal @db.Decimal(18, 2)
+  expense Decimal @db.Decimal(18, 2)
 
   @@id([day, month, year, userId])
 }
@@ -61,8 +62,8 @@ model YearHistory {
   userId  String
   month   Int
   year    Int
-  income  Float
-  expense Float
+  income  Decimal @db.Decimal(18, 2)
+  expense Decimal @db.Decimal(18, 2)
 
   @@id([month, year, userId])
 }

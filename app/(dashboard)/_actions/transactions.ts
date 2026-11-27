@@ -1,29 +1,38 @@
 "use server";
 
+import { requireActionUser } from "@/lib/auth";
+import { computeAmountInBase, getFxRate } from "@/lib/fx";
+import { toDecimal } from "@/lib/money";
 import prisma from "@/lib/prisma";
 import {
   CreateTransactionSchema,
   CreateTransactionSchemaType,
 } from "@/schema/transaction";
-import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 
 export async function CreateTransaction(form: CreateTransactionSchemaType) {
   const parsedBody = CreateTransactionSchema.safeParse(form);
   if (!parsedBody.success) {
-    throw new Error(parsedBody.error.message);
+    throw new Error("bad request");
   }
 
-  const user = await currentUser();
-  if (!user) {
-    redirect("/sign-in");
+  const user = await requireActionUser();
+
+  const { amount, category, date, description, type, currency } =
+    parsedBody.data;
+
+  const settings = await prisma.userSettings.findUnique({
+    where: { userId: user.id },
+  });
+  if (!settings) {
+    throw new Error("user settings not found");
   }
 
-  const { amount, category, date, description, type } = parsedBody.data;
+  // Scope category by user + name + type (prevents cross-type icon/name mixups).
   const categoryRow = await prisma.category.findFirst({
     where: {
       userId: user.id,
       name: category,
+      type,
     },
   });
 
@@ -31,14 +40,24 @@ export async function CreateTransaction(form: CreateTransactionSchemaType) {
     throw new Error("category not found");
   }
 
+  const fxRate = await getFxRate(currency, settings.currency, date);
+  const amountInBase = computeAmountInBase(amount, fxRate);
+  const fxRateAt = new Date();
+  const amountDec = toDecimal(amount);
+  const amountInBaseDec = toDecimal(amountInBase);
+  const fxRateDec = toDecimal(fxRate);
+
   // NOTE: don't make confusion between $transaction ( prisma ) and prisma.transaction (table)
 
   await prisma.$transaction([
-    // Create user transaction
     prisma.transaction.create({
       data: {
         userId: user.id,
-        amount,
+        amount: amountDec,
+        currency,
+        amountInBase: amountInBaseDec,
+        fxRate: fxRateDec,
+        fxRateAt,
         date,
         description: description || "",
         type,
@@ -47,7 +66,6 @@ export async function CreateTransaction(form: CreateTransactionSchemaType) {
       },
     }),
 
-    // Update month aggregate table
     prisma.monthHistory.upsert({
       where: {
         day_month_year_userId: {
@@ -62,20 +80,19 @@ export async function CreateTransaction(form: CreateTransactionSchemaType) {
         day: date.getUTCDate(),
         month: date.getUTCMonth(),
         year: date.getUTCFullYear(),
-        expense: type === "expense" ? amount : 0,
-        income: type === "income" ? amount : 0,
+        expense: type === "expense" ? amountInBaseDec : toDecimal(0),
+        income: type === "income" ? amountInBaseDec : toDecimal(0),
       },
       update: {
         expense: {
-          increment: type === "expense" ? amount : 0,
+          increment: type === "expense" ? amountInBaseDec : toDecimal(0),
         },
         income: {
-          increment: type === "income" ? amount : 0,
+          increment: type === "income" ? amountInBaseDec : toDecimal(0),
         },
       },
     }),
 
-    // Update year aggreate
     prisma.yearHistory.upsert({
       where: {
         month_year_userId: {
@@ -88,15 +105,15 @@ export async function CreateTransaction(form: CreateTransactionSchemaType) {
         userId: user.id,
         month: date.getUTCMonth(),
         year: date.getUTCFullYear(),
-        expense: type === "expense" ? amount : 0,
-        income: type === "income" ? amount : 0,
+        expense: type === "expense" ? amountInBaseDec : toDecimal(0),
+        income: type === "income" ? amountInBaseDec : toDecimal(0),
       },
       update: {
         expense: {
-          increment: type === "expense" ? amount : 0,
+          increment: type === "expense" ? amountInBaseDec : toDecimal(0),
         },
         income: {
-          increment: type === "income" ? amount : 0,
+          increment: type === "income" ? amountInBaseDec : toDecimal(0),
         },
       },
     }),
