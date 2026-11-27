@@ -37,7 +37,7 @@ Related: [`AGENTS.md`](../../AGENTS.md) · [`DEPENDENCY_COMPATIBILITY_REPORT.md`
 
 **Optional FX:** `FX_API_BASE_URL`
 
-**Node:** Prefer Node **20 LTS** (20.9+ recommended for Clerk/Next 16).
+**Node:** Prefer Node **26 LTS** (Active LTS; see `.nvmrc`). Node 20 is EOL.
 
 **Lint:** `npm run lint` → `eslint .` (flat `eslint.config.mjs`). `next lint` removed in Next 16.
 
