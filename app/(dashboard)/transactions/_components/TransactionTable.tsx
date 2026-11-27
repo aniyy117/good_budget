@@ -119,9 +119,14 @@ const columns: ColumnDef<TransactionHistoryRow>[] = [
       <DataTableColumnHeader column={column} title="Amount" />
     ),
     cell: ({ row }) => (
-      <p className="text-md rounded-lg bg-gray-400/5 p-2 text-center font-medium">
-        {row.original.formattedAmount}
-      </p>
+      <div className="text-md rounded-lg bg-gray-400/5 p-2 text-center font-medium">
+        <p>{row.original.formattedAmount}</p>
+        {row.original.formattedAmountInBase ? (
+          <p className="text-xs font-normal text-muted-foreground">
+            ≈ {row.original.formattedAmountInBase}
+          </p>
+        ) : null}
+      </div>
     ),
   },
   {

@@ -50,7 +50,8 @@ async function getTransactionsHistory(userId: string, from: Date, to: Date) {
     return null;
   }
 
-  const formatter = GetFormatterForCurrency(userSettings.currency);
+  const baseCurrency = userSettings.currency;
+  const baseFormatter = GetFormatterForCurrency(baseCurrency);
 
   const transactions: Transaction[] = await prisma.transaction.findMany({
     where: {
@@ -65,8 +66,17 @@ async function getTransactionsHistory(userId: string, from: Date, to: Date) {
     },
   });
 
-  return transactions.map((transaction: Transaction) => ({
-    ...transaction,
-    formattedAmount: formatter.format(transaction.amount),
-  }));
+  return transactions.map((transaction: Transaction) => {
+    const formattedAmount = GetFormatterForCurrency(
+      transaction.currency
+    ).format(transaction.amount);
+    const showBaseEquivalent = transaction.currency !== baseCurrency;
+    return {
+      ...transaction,
+      formattedAmount,
+      ...(showBaseEquivalent && {
+        formattedAmountInBase: baseFormatter.format(transaction.amountInBase),
+      }),
+    };
+  });
 }
