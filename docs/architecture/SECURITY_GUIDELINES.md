@@ -57,7 +57,7 @@ Required patterns:
 | Errors | Stable client messages (`bad request`, `Unauthorized`); avoid dumping Zod trees |
 | CSRF | Next Server Action origin checks; keep Next patched |
 
-Do not introduce new state-changing **GET** endpoints. Existing create-on-GET for user-settings is legacy (BUG-01 / WP5).
+Do not introduce new state-changing **GET** endpoints. `GET /api/user-settings` is read-only; settings are created via `UpdateUserCurrency` upsert (WP5).
 
 ---
 

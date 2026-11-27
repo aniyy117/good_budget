@@ -81,7 +81,7 @@ Client components call [`apiGet`](../../lib/api.ts) (`/api/...`) via TanStack Qu
 
 | Endpoint | Role |
 |----------|------|
-| `/api/user-settings` | Get-or-create settings (side-effecting GET — known debt) |
+| `/api/user-settings` | Read-only settings (`null` if onboarding incomplete) |
 | `/api/categories` | List categories |
 | `/api/stats/balance` | Income/expense totals |
 | `/api/stats/categories` | Category breakdown |

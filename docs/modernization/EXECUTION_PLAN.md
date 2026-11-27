@@ -98,11 +98,11 @@ Related: [`MODERNIZATION_ROADMAP.md`](./MODERNIZATION_ROADMAP.md) · [Audit issu
 
 | | |
 |--|--|
-| **Status** | Pending |
-| **Files** | `app/api/user-settings/route.ts`, `app/wizard/_actions/userSettings.ts`, `CurrencyComboBox.tsx` |
-| **Actions** | GET read-only; create/upsert via Server Action on currency select; keep dashboard redirect meaningful |
-| **Exit** | Visiting wizard alone does not silently complete onboarding |
-| **Audit** | BUG-01, BUG-11 |
+| **Status** | **Completed** (27 November 2026) — see [`WP5_ONBOARDING_SETTINGS_REPORT.md`](./WP5_ONBOARDING_SETTINGS_REPORT.md) |
+| **Files** | `app/api/user-settings/route.ts`, `app/wizard/_actions/userSettings.ts`, `CurrencyComboBox.tsx`, `app/wizard/page.tsx` |
+| **Actions** | GET read-only (`null` if missing); `UpdateUserCurrency` upsert + revalidate; wizard copy fix |
+| **Exit** | Met: visiting wizard alone does not create settings; currency select creates/updates row |
+| **Audit** | BUG-01, BUG-11 addressed; BUG-12 copy fixed opportunistically |
 
 ---
 

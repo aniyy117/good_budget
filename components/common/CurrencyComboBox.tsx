@@ -36,15 +36,15 @@ export function CurrencyComboBox() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const userSettings = useQuery<UserSettings>({
+  const userSettings = useQuery<UserSettings | null>({
     queryKey: ["userSettings"],
-    queryFn: () => apiGet<UserSettings>("/api/user-settings"),
+    queryFn: () => apiGet<UserSettings | null>("/api/user-settings"),
   });
 
   React.useEffect(() => {
     if (!userSettings.data) return;
     const userCurrency = Currencies.find(
-      (currency) => currency.value === userSettings.data.currency
+      (currency) => currency.value === userSettings.data?.currency
     );
     if (userCurrency) setSelectedOption(userCurrency);
   }, [userSettings.data]);
@@ -78,7 +78,7 @@ export function CurrencyComboBox() {
         return;
       }
 
-      toast.loading("Updating currency...", {
+      toast.loading("Saving currency...", {
         id: "update-currency",
       });
 

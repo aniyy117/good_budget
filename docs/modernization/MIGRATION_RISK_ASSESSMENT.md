@@ -21,7 +21,7 @@ Related: [Audit](../audit/NEXTJS_APPLICATION_AUDIT.md) · [`EXECUTION_PLAN.md`](
 | R3 | Client fetch breaks when APIs stop redirecting | Medium | Medium | 1–3 | Server returns 401 (WP2); add client `res.ok` helper in WP3 |
 | R4 | Aggregate drift (history tables) | Medium | Medium | 1–2 | Keep `$transaction`; add tests; optional reconcile job later |
 | R5 | Wrong category type on create | Low (mitigated WP2) | Medium | 1 | **WP2 done** — filter by type |
-| R6 | Onboarding auto-creates INR via GET | High | Low–Medium | 2 | Mutation-only create (BUG-01) |
+| R6 | Onboarding auto-creates INR via GET | High | Low–Medium | 2 | **Mitigated (WP5)** — read-only GET + currency upsert |
 | R7 | Next 16 + React 19 + Clerk simultaneous breakages | High if unstaged | High | 3 | Staged upgrades; smoke E2E; rollback tag |
 | R8 | Middleware/proxy rename mistakes on Next 16 | Medium | High | 3 | Follow official guide; keep auth tests |
 | R9 | Float money precision errors | Medium over time | Medium | 5 / WP12 | Decimal or cents migration with backup |

@@ -3,6 +3,7 @@
 import { requireActionUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { UpdateUserCurrencySchema } from "@/schema/userSettings";
+import { revalidatePath } from "next/cache";
 
 export async function UpdateUserCurrency(currency: string) {
   const parsedBody = UpdateUserCurrencySchema.safeParse({
@@ -14,15 +15,25 @@ export async function UpdateUserCurrency(currency: string) {
   }
 
   const user = await requireActionUser();
+  const nextCurrency = parsedBody.data.currency as string;
 
-  const userSettings = await prisma.userSettings.update({
+  // Upsert so first currency choice creates settings (onboarding) without a side-effecting GET.
+  const userSettings = await prisma.userSettings.upsert({
     where: {
       userId: user.id,
     },
-    data: {
-      currency: parsedBody.data.currency as string,
+    update: {
+      currency: nextCurrency,
+    },
+    create: {
+      userId: user.id,
+      currency: nextCurrency,
     },
   });
+
+  revalidatePath("/");
+  revalidatePath("/wizard");
+  revalidatePath("/manage");
 
   return userSettings;
 }
