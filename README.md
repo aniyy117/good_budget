@@ -25,7 +25,7 @@ Personal finance tracker: income and expenses, categories, overview stats, histo
 
 ### Prerequisites
 
-- Node.js **20 LTS** recommended
+- Node.js **26 LTS** recommended (see `.nvmrc`)
 - PostgreSQL database (e.g. Vercel Postgres / Neon)
 - Clerk application credentials
 
