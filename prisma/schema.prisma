@@ -48,6 +48,8 @@ model Transaction {
 
   category     String
   categoryIcon String
+
+  @@index([userId, date])
 }
 
 model MonthHistory {
