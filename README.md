@@ -35,7 +35,7 @@ Personal finance tracker: income and expenses, categories, overview stats, histo
 npm ci
 ```
 
-`postinstall` runs `prisma generate`.
+`postinstall` runs `prisma generate`. Repo `.npmrc` enables `legacy-peer-deps` so install works with React 19 while `@emoji-mart/react` still peers React ≤18.
 
 ### Environment
 

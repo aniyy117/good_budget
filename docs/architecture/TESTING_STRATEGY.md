@@ -49,7 +49,7 @@ npm run test:e2e   # requires app reachable (see playwright.config.ts)
 
 GitHub Actions on `pull_request` / `push` to main:
 
-1. `npm ci --legacy-peer-deps`
+1. `npm ci` (`.npmrc` sets `legacy-peer-deps` for `@emoji-mart/react` vs React 19)
 2. Lint
 3. Typecheck
 4. Unit tests
