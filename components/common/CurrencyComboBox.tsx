@@ -18,6 +18,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Currencies, Currency } from "@/lib/currencies";
 import { apiGet } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -33,6 +43,10 @@ export function CurrencyComboBox({
   warnOnChange?: boolean;
 }) {
   const [open, setOpen] = React.useState(false);
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [pendingCurrency, setPendingCurrency] = React.useState<Currency | null>(
+    null
+  );
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [selectedOption, setSelectedOption] = React.useState<Currency | null>(
     null
@@ -75,6 +89,16 @@ export function CurrencyComboBox({
     },
   });
 
+  const saveCurrency = React.useCallback(
+    (currency: Currency) => {
+      toast.loading("Saving currency...", {
+        id: "update-currency",
+      });
+      mutation.mutate(currency.value);
+    },
+    [mutation]
+  );
+
   const selectOption = React.useCallback(
     (currency: Currency | null) => {
       if (!currency) {
@@ -82,61 +106,89 @@ export function CurrencyComboBox({
         return;
       }
 
-      if (warnOnChange && userSettings.data) {
-        const ok = window.confirm(
-          "Existing transactions keep their original currency and saved conversions. Only new transactions will use this as the base currency. Continue?"
-        );
-        if (!ok) return;
+      if (userSettings.data?.currency === currency.value) {
+        return;
       }
 
-      toast.loading("Saving currency...", {
-        id: "update-currency",
-      });
+      if (warnOnChange && userSettings.data) {
+        setPendingCurrency(currency);
+        setConfirmOpen(true);
+        return;
+      }
 
-      mutation.mutate(currency.value);
+      saveCurrency(currency);
     },
-    [mutation, userSettings.data, warnOnChange]
+    [saveCurrency, userSettings.data, warnOnChange]
   );
 
-  if (isDesktop) {
-    return (
-      <SkeletonWrapper isLoading={userSettings.isFetching}>
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className="w-full justify-start"
-              disabled={mutation.isPending}
-            >
-              {selectedOption ? <>{selectedOption.label}</> : <>Set currency</>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[200px] p-0" align="start">
-            <OptionList setOpen={setOpen} setSelectedOption={selectOption} />
-          </PopoverContent>
-        </Popover>
-      </SkeletonWrapper>
-    );
-  }
+  const combo = isDesktop ? (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          className="w-full justify-start"
+          disabled={mutation.isPending}
+        >
+          {selectedOption ? <>{selectedOption.label}</> : <>Set currency</>}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[200px] p-0" align="start">
+        <OptionList setOpen={setOpen} setSelectedOption={selectOption} />
+      </PopoverContent>
+    </Popover>
+  ) : (
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
+        <Button
+          variant="outline"
+          className="w-full justify-start"
+          disabled={mutation.isPending}
+        >
+          {selectedOption ? <>{selectedOption.label}</> : <>Set currency</>}
+        </Button>
+      </DrawerTrigger>
+      <DrawerContent>
+        <div className="mt-4 border-t">
+          <OptionList setOpen={setOpen} setSelectedOption={selectOption} />
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
 
   return (
     <SkeletonWrapper isLoading={userSettings.isFetching}>
-      <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger asChild>
-          <Button
-            variant="outline"
-            className="w-full justify-start"
-            disabled={mutation.isPending}
-          >
-            {selectedOption ? <>{selectedOption.label}</> : <>Set currency</>}
-          </Button>
-        </DrawerTrigger>
-        <DrawerContent>
-          <div className="mt-4 border-t">
-            <OptionList setOpen={setOpen} setSelectedOption={selectOption} />
-          </div>
-        </DrawerContent>
-      </Drawer>
+      {combo}
+      <AlertDialog
+        open={confirmOpen}
+        onOpenChange={(next) => {
+          setConfirmOpen(next);
+          if (!next) setPendingCurrency(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Change base currency?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Past transactions keep their original currency and saved
+              conversions. Dashboard totals stay based on those snapshots. Only
+              new transactions will use{" "}
+              {pendingCurrency?.label ?? "the selected currency"} as the base.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (!pendingCurrency) return;
+                saveCurrency(pendingCurrency);
+                setPendingCurrency(null);
+              }}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </SkeletonWrapper>
   );
 }
