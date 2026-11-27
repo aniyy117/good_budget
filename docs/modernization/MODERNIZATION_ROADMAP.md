@@ -72,7 +72,7 @@ Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT
 | Clerk upgrade to version supporting Next 16 / React 19 | **Completed** — Clerk **6.39.9** (WP10); optional Core 3 / v7 later |
 | Next.js **16** + React **19** migration | **Completed** ([WP10 report](./WP10_NEXTJS16_UPGRADE_REPORT.md)) |
 | Adapt middleware → proxy (if required by Next 16) | Pending |
-| Metadata / security headers | Pending |
+| Metadata / security headers | **Partial** — security headers in `next.config.mjs` (CFG-01); metadata polish still open |
 
 **Exit criteria:** App runs on Next 16 with green lint/build and smoke E2E; docs updated to mark Next 16 as **current**.
 

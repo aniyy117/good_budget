@@ -67,6 +67,7 @@ Open [http://localhost:3000](http://localhost:3000).
 |--------|-------------|
 | `npm run dev` | Development server |
 | `npm run build` | Production build |
+| `npm run analyze` | Production build + webpack bundle analyzer |
 | `npm run start` | Start production server |
 | `npm run lint` | ESLint |
 | `npm run prisma-studio` | Prisma Studio |

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "analyze": "ANALYZE=true next build --webpack",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -60,6 +61,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",
+    "@next/bundle-analyzer": "^16.4.6",
     "@playwright/test": "^1.65.1",
     "@tanstack/react-query-devtools": "^5.32.1",
     "@types/node": "^20",

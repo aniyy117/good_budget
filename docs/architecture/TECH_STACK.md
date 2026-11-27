@@ -43,6 +43,8 @@ Related: [`AGENTS.md`](../../AGENTS.md) · [`DEPENDENCY_COMPATIBILITY_REPORT.md`
 
 **Request interception:** [`proxy.ts`](../../proxy.ts) (Next 16; formerly `middleware.ts`).
 
+**Next config:** [`next.config.mjs`](../../next.config.mjs) — `reactStrictMode`, `poweredByHeader: false`, security headers (CFG-01), `serverExternalPackages` (Prisma), `optimizePackageImports`, Clerk `images.remotePatterns`, dev fetch logging. Bundle report: `npm run analyze` (`ANALYZE=true`, webpack).
+
 ---
 
 ## Target residual
