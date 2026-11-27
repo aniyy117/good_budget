@@ -123,9 +123,10 @@ Related: [`MODERNIZATION_ROADMAP.md`](./MODERNIZATION_ROADMAP.md) · [Audit issu
 
 | | |
 |--|--|
-| **Status** | Pending |
-| **Files** | `app/(dashboard)/manage/page.tsx`, `transactions/page.tsx`, extract client islands |
-| **Exit** | Static headers server-rendered; interactivity isolated |
+| **Status** | **Completed** (27 November 2026) — see [`WP6_RSC_SHELLS_REPORT.md`](./WP6_RSC_SHELLS_REPORT.md) |
+| **Files** | `manage/page.tsx`, `manage/_components/ManagePageContent.tsx`, `transactions/page.tsx`, `transactions/_components/TransactionsPageContent.tsx` |
+| **Actions** | RSC page shells; currency/categories + date-range/table as client islands |
+| **Exit** | Met: static headers/titles server-rendered; interactivity isolated |
 | **Audit** | ARCH-01 |
 
 ---

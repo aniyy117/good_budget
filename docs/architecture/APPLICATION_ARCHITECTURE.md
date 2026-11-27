@@ -1,7 +1,7 @@
 # Application Architecture
 
 **Status:** Living document  
-**Last verified:** 27 November 2026 (post multi-currency)  
+**Last verified:** 27 November 2026 (post WP6)  
 **Current runtime:** Next.js 14.2.35 App Router  
 **Target runtime:** Next.js 16 (phased; not deployed yet)
 
@@ -48,8 +48,8 @@ flowchart TD
 | `/sign-in/[[...sign-in]]` | `app/(auth)/sign-in/...` | Clerk UI |
 | `/sign-up/[[...sign-up]]` | `app/(auth)/sign-up/...` | Clerk UI |
 | `/` | `app/(dashboard)/page.tsx` | RSC + client children |
-| `/transactions` | `app/(dashboard)/transactions/page.tsx` | Full CSR |
-| `/manage` | `app/(dashboard)/manage/page.tsx` | Full CSR |
+| `/transactions` | `app/(dashboard)/transactions/page.tsx` | RSC shell + client island (`TransactionsPageContent`) |
+| `/manage` | `app/(dashboard)/manage/page.tsx` | RSC shell + client island (`ManagePageContent`) |
 | `/wizard` | `app/wizard/page.tsx` | RSC + client currency UI |
 | `/api/*` | `app/api/**/route.ts` | Route Handlers (GET) |
 
@@ -114,7 +114,7 @@ Evolve in place:
 |------|---------|--------|
 | Framework | Next 14.2.3 | Next 16 + React 19 |
 | Edge auth | Bare `clerkMiddleware()` | Public routes matcher + `auth.protect()` (or Next 16 equivalent) |
-| Dashboard pages | Some full CSR | RSC shells + client islands |
+| Dashboard pages | Manage/transactions now RSC shells + islands (WP6); home already hybrid | Prefer RSC shells + client islands everywhere |
 | API auth errors | `redirect` | `401` JSON for XHR |
 | Settings create | GET side effect | Explicit Server Action / POST |
 | Money | `Float` | `Decimal` or integer cents |
