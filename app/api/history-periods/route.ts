@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import type { YearRow } from "@/lib/types";
 
 export async function GET(_request: Request) {
-  const authResult = requireApiUserId();
+  const authResult = await requireApiUserId();
   if (authResult.error) {
     return authResult.error;
   }

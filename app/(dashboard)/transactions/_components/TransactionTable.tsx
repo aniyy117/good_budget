@@ -49,9 +49,19 @@ interface Props {
   to: Date;
 }
 
-const emptyData: any[] = [];
-
 type TransactionHistoryRow = GetTransactionHistoryResponseType[0];
+
+type TransactionCsvRow = {
+  category: string;
+  categoryIcon: string;
+  description: string;
+  type: string;
+  amount: number;
+  formattedAmount: string;
+  date: string;
+};
+
+const emptyData: TransactionHistoryRow[] = [];
 
 const columns: ColumnDef<TransactionHistoryRow>[] = [
   {
@@ -156,7 +166,7 @@ function TransactionTable({ from, to }: Props) {
       ),
   });
 
-  const handleExportCSV = (data: any[]) => {
+  const handleExportCSV = (data: TransactionCsvRow[]) => {
     const csv = generateCsv(csvConfig)(data);
     download(csvConfig)(csv);
   };
@@ -216,15 +226,20 @@ function TransactionTable({ from, to }: Props) {
             size={"sm"}
             className="ml-auto h-8 lg:flex"
             onClick={() => {
-              const data = table.getFilteredRowModel().rows.map((row) => ({
-                category: row.original.category,
-                categoryIcon: row.original.categoryIcon,
-                description: row.original.description,
-                type: row.original.type,
-                amount: row.original.amount,
-                formattedAmount: row.original.formattedAmount,
-                date: row.original.date,
-              }));
+              const data: TransactionCsvRow[] = table
+                .getFilteredRowModel()
+                .rows.map((row) => ({
+                  category: row.original.category,
+                  categoryIcon: row.original.categoryIcon,
+                  description: row.original.description,
+                  type: row.original.type,
+                  amount: row.original.amount,
+                  formattedAmount: row.original.formattedAmount,
+                  date:
+                    row.original.date instanceof Date
+                      ? row.original.date.toISOString()
+                      : String(row.original.date),
+                }));
               handleExportCSV(data);
             }}
           >

@@ -17,7 +17,7 @@ const getHistoryDataSchema = z.object({
 });
 
 export async function GET(request: Request) {
-  const authResult = requireApiUserId();
+  const authResult = await requireApiUserId();
   if (authResult.error) {
     return authResult.error;
   }

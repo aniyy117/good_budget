@@ -2,7 +2,7 @@ import { requireApiUserId } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
 export async function GET(_request: Request) {
-  const authResult = requireApiUserId();
+  const authResult = await requireApiUserId();
   if (authResult.error) {
     return authResult.error;
   }

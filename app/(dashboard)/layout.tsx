@@ -4,7 +4,7 @@ import React, { ReactNode } from "react";
 
 async function layout({ children }: { children: ReactNode }) {
   // Defense in depth: middleware already protects; layout re-checks for RSC/CSR children.
-  requirePageAuth();
+  await requirePageAuth();
 
   return (
     <div className="relative flex h-screen w-full flex-col">

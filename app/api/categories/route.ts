@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { z } from "zod";
 
 export async function GET(request: Request) {
-  const authResult = requireApiUserId();
+  const authResult = await requireApiUserId();
   if (authResult.error) {
     return authResult.error;
   }

@@ -2,7 +2,7 @@
 
 **Product goal:** Phased modernization of GoodBudget toward **Next.js 16** without rewriting the product or compromising auth, UX, or financial data.
 
-**Last updated:** 27 November 2026 (WP9 DB index completed)
+**Last updated:** 27 November 2026 (WP10 Next.js 16 completed)
 
 Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT.md`](./PHASE_0_BASELINE_REPORT.md) · [Audit](../audit/NEXTJS_APPLICATION_AUDIT.md) · [`AGENTS.md`](../../AGENTS.md)
 
@@ -36,7 +36,7 @@ Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT
 
 | Item | Audit IDs | Status |
 |------|-----------|--------|
-| Upgrade Next off 14.2.3 (prefer ≥14.2.35 on 14.x first) | SEC-01, SEC-05 | **Completed** — now **14.2.35** ([WP1 report](./WP1_NEXTJS_SECURITY_UPGRADE_REPORT.md)); residual Next advisories need major upgrade later |
+| Upgrade Next off 14.2.3 (prefer ≥14.2.35 on 14.x first) | SEC-01, SEC-05 | **Completed** — WP1 → 14.2.35; WP10 → **16.4.6** ([WP10 report](./WP10_NEXTJS16_UPGRADE_REPORT.md)) |
 | Clerk middleware route protection | SEC-02 | **Completed** (WP2) |
 | Dashboard layout / manage & transactions auth gates | SEC-03 | **Completed** (WP2) |
 | API 401 JSON + client fetch helper | SEC-04, API-01 | **Completed** — API 401 (WP2); `apiGet` + mutations ([WP3 report](./WP3_CLIENT_FETCH_MUTATION_HYGIENE_REPORT.md)) |
@@ -69,14 +69,14 @@ Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT
 |------|--------|
 | `loading.tsx` / `error.tsx` for dashboard | Pending |
 | Reduce client waterfalls (server prefetch where useful) | Pending |
-| Clerk upgrade to version supporting Next 16 / React 19 | Pending |
-| Next.js **16** + React **19** migration | Pending |
+| Clerk upgrade to version supporting Next 16 / React 19 | **Completed** — Clerk **6.39.9** (WP10); optional Core 3 / v7 later |
+| Next.js **16** + React **19** migration | **Completed** ([WP10 report](./WP10_NEXTJS16_UPGRADE_REPORT.md)) |
 | Adapt middleware → proxy (if required by Next 16) | Pending |
 | Metadata / security headers | Pending |
 
 **Exit criteria:** App runs on Next 16 with green lint/build and smoke E2E; docs updated to mark Next 16 as **current**.
 
-**Note:** Direct 14.2.3 → 16 is high risk. Prefer patched 14.2.x (and optionally 15) before 16. See [`DEPENDENCY_COMPATIBILITY_REPORT.md`](./DEPENDENCY_COMPATIBILITY_REPORT.md).
+**Note:** WP10 used 14 → 15.5.29 → 16.4.6. See [`DEPENDENCY_COMPATIBILITY_REPORT.md`](./DEPENDENCY_COMPATIBILITY_REPORT.md) · [`WP10_NEXTJS16_UPGRADE_REPORT.md`](./WP10_NEXTJS16_UPGRADE_REPORT.md).
 
 ---
 

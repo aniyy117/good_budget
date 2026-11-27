@@ -12,10 +12,11 @@ type ClerkUser = NonNullable<Awaited<ReturnType<typeof currentUser>>>;
  * For App Router Route Handlers: return 401 JSON when there is no session.
  * Do not redirect API clients to HTML sign-in pages.
  */
-export function requireApiUserId():
+export async function requireApiUserId(): Promise<
   | { userId: string; error?: undefined }
-  | { userId?: undefined; error: NextResponse<UnauthorizedJson> } {
-  const { userId } = auth();
+  | { userId?: undefined; error: NextResponse<UnauthorizedJson> }
+> {
+  const { userId } = await auth();
   if (!userId) {
     return {
       error: NextResponse.json(
@@ -28,12 +29,11 @@ export function requireApiUserId():
 }
 
 /**
- * For App Router pages/layouts (Clerk 5.0.x).
- * Prefer redirect-to-sign-in over auth().protect(), which returns 404 for
- * unauthenticated document requests in this SDK version.
+ * For App Router pages/layouts.
+ * Prefer redirect-to-sign-in over auth().protect() for document requests.
  */
-export function requirePageAuth(): void {
-  const { userId } = auth();
+export async function requirePageAuth(): Promise<void> {
+  const { userId } = await auth();
   if (!userId) {
     redirect("/sign-in");
   }

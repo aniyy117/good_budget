@@ -172,10 +172,10 @@ Related: [`MODERNIZATION_ROADMAP.md`](./MODERNIZATION_ROADMAP.md) · [Audit issu
 
 | | |
 |--|--|
-| **Status** | Pending |
-| **Depends** | WP1–WP4 strongly recommended first |
-| **Actions** | Follow Next upgrade guide; bump Clerk; fix breakages; update TECH_STACK + AGENTS “current” versions |
-| **Exit** | `next build` green on Next 16; smoke E2E |
+| **Status** | **Completed** (27 November 2026) — see [`WP10_NEXTJS16_UPGRADE_REPORT.md`](./WP10_NEXTJS16_UPGRADE_REPORT.md) |
+| **Depends** | WP1–WP9 done first |
+| **Actions** | Next 15.5.29 bridge → **16.4.6**; React 19.2.9; Clerk 6.39.9; `proxy.ts`; await `auth()`; ESLint CLI; zod 4 |
+| **Exit** | Met: `npm run build` green on Next 16; tests pass; lint warnings only |
 | **See** | [`DEPENDENCY_COMPATIBILITY_REPORT.md`](./DEPENDENCY_COMPATIBILITY_REPORT.md) |
 
 ---

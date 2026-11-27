@@ -1,7 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 /**
- * Public routes (Clerk v5.0.3 / Next 14 — middleware.ts).
+ * Public routes (Clerk v6 / Next 15 — middleware.ts).
  * Page routes: redirect unauthenticated users to sign-in.
  * API routes: left for Route Handlers to return 401 JSON (no HTML redirect).
  */
@@ -12,7 +12,7 @@ const isPublicRoute = createRouteMatcher([
 
 const isApiRoute = createRouteMatcher(["/api(.*)"]);
 
-export default clerkMiddleware((auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
   if (isPublicRoute(req)) {
     return;
   }
@@ -21,7 +21,7 @@ export default clerkMiddleware((auth, req) => {
     return;
   }
 
-  const { userId, redirectToSignIn } = auth();
+  const { userId, redirectToSignIn } = await auth();
   if (!userId) {
     return redirectToSignIn();
   }

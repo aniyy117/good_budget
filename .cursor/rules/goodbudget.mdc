@@ -7,8 +7,9 @@ alwaysApply: true
 
 Before modifying code or docs, read and follow **[`AGENTS.md`](../../AGENTS.md)**.
 
-- Current stack is **Next.js 14.2.35** / React 18 unless `package.json` says otherwise. Target is phased **Next.js 16**.
+- Current stack is **Next.js 16.4.6** / React 19 unless `package.json` says otherwise.
 - Do not duplicate standards here — AGENTS.md and `docs/` are canonical.
 - Preserve auth, UX, and financial data integrity. No unrelated refactors.
+- Never use TypeScript `any` or `as any` — use real types or `unknown` + narrowing (`@typescript-eslint/no-explicit-any`).
 - Never commit or paste secrets from `.env` / `.env.local`.
 - After architectural or stack changes, update the relevant files under `docs/`.

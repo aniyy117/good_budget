@@ -10,7 +10,7 @@ Related: [`AGENTS.md`](../../AGENTS.md) · [`APPLICATION_ARCHITECTURE.md`](./APP
 
 - Keep `strict: true` in `tsconfig.json`.
 - Prefer explicit types at module boundaries; use Zod inference (`z.infer<>`) for forms and actions.
-- Avoid `any`. Prefer proper types or `unknown` + narrowing.
+- **Never use `any`** (including `as any`). Prefer proper types or `unknown` + narrowing. Enforced by ESLint `@typescript-eslint/no-explicit-any` (`error`).
 - Use `import type` for type-only imports (especially when importing from `app/api/**/route.ts`).
 - Prefer `string` over boxed `String`.
 

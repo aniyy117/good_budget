@@ -10,7 +10,7 @@ Read this file **before** modifying any application or documentation code. For d
 
 1. Read this file and the relevant docs under [`docs/`](docs/) for the task at hand.
 2. Verify assumptions against the **actual** repository (`package.json`, `app/`, `prisma/`), not outdated memory.
-3. Distinguish **Current (Next.js 14.2.35)** from **Target (Next.js 16)**. Next 16 is the modernization goal; it is **not** the running stack until upgrades land.
+3. Current stack is **Next.js 16.4.6** / React 19 (WP10). Prefer incremental changes; preserve authentication, UX, and financial data integrity.
 4. Prefer incremental modernization over rewrites. Preserve authentication, UX, and financial data integrity.
 5. Do not expose secrets. Document env **names** only. Never commit `.env`, `.env.local`, or credentials.
 6. Scope discipline: if the user asked for docs-only or a single phase, do not expand into unrelated refactors.
@@ -37,12 +37,12 @@ GoodBudget is a personal finance tracker: record income and expenses, organize c
 
 | Layer | Technology | Locked version (approx.) |
 |-------|------------|--------------------------|
-| Framework | Next.js App Router | **14.2.35** |
-| UI | React | **18.3.1** |
-| Auth | `@clerk/nextjs` | **5.0.3** |
+| Framework | Next.js App Router | **16.4.6** |
+| UI | React | **19.2.9** |
+| Auth | `@clerk/nextjs` | **6.39.9** |
 | ORM / DB | Prisma + PostgreSQL | **5.13.0** |
 | Client data | TanStack Query | **5.32.1** |
-| Validation | Zod | **3.x** |
+| Validation | Zod | **4.x** |
 | Styling | Tailwind CSS + shadcn/ui | **3.4.x** |
 
 Full matrix: [`docs/architecture/TECH_STACK.md`](docs/architecture/TECH_STACK.md).
@@ -68,8 +68,8 @@ Details: [`docs/architecture/APPLICATION_ARCHITECTURE.md`](docs/architecture/APP
 
 ### Authentication and authorization (current — post WP2)
 
-- Clerk via `ClerkProvider` and [`middleware.ts`](middleware.ts): public `/sign-in`/`/sign-up`; private pages use `redirectToSignIn()`.
-- Shared helpers in [`lib/auth.ts`](lib/auth.ts): `requirePageAuth`, `requireApiUserId` (401 JSON), `requireActionUser`.
+- Clerk via `ClerkProvider` and [`proxy.ts`](proxy.ts) (Next 16; was `middleware.ts`): public `/sign-in`/`/sign-up`; private pages use `redirectToSignIn()`.
+- Shared helpers in [`lib/auth.ts`](lib/auth.ts): async `requirePageAuth`, `requireApiUserId` (401 JSON), `requireActionUser` — always `await auth()`.
 - Dashboard and wizard layouts re-check auth (defense in depth).
 - Data isolation: Prisma queries must always filter by Clerk `user.id` (category lookups include `type`).
 
@@ -96,7 +96,7 @@ Audit findings (issue IDs): [`docs/audit/NEXTJS_APPLICATION_AUDIT.md`](docs/audi
 
 - Keep the App Router. No Pages Router.
 - Route groups: `(auth)`, `(dashboard)`; feature folders `_components`, `_actions`.
-- On Next 16 upgrades, follow official migration notes (e.g. middleware → proxy naming if required). Until then, keep [`middleware.ts`](middleware.ts).
+- Keep App Router request interception in [`proxy.ts`](proxy.ts) (Next 16 naming).
 
 ### Server vs Client Components
 
@@ -134,7 +134,7 @@ Audit findings (issue IDs): [`docs/audit/NEXTJS_APPLICATION_AUDIT.md`](docs/audi
 
 Full detail: [`docs/architecture/CODING_STANDARDS.md`](docs/architecture/CODING_STANDARDS.md).
 
-- TypeScript: keep `strict: true`. Avoid `any`; prefer `import type`.
+- TypeScript: keep `strict: true`. **Never use `any` / `as any`** (ESLint `@typescript-eslint/no-explicit-any`); prefer `import type` and `unknown` + narrowing.
 - New functions: `camelCase` (`createTransaction`). Existing PascalCase Server Actions may remain until a deliberate rename; do not mass-rename in unrelated PRs.
 - Prefer reuse (date-range controls, delete dialogs) over duplication.
 - No unnecessary abstractions or drive-by refactors outside the task.

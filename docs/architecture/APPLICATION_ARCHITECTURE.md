@@ -1,9 +1,9 @@
 # Application Architecture
 
 **Status:** Living document  
-**Last verified:** 27 November 2026 (post WP6)  
-**Current runtime:** Next.js 14.2.35 App Router  
-**Target runtime:** Next.js 16 (phased; not deployed yet)
+**Last verified:** 27 November 2026 (post WP10)  
+**Current runtime:** Next.js 16.4.6 App Router  
+**Target runtime:** Next.js 16 (reached in WP10); residual Clerk v7 / Decimal / CI later
 
 Related: [`AGENTS.md`](../../AGENTS.md) · [`TECH_STACK.md`](./TECH_STACK.md) · [Audit](../audit/NEXTJS_APPLICATION_AUDIT.md)
 
