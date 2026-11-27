@@ -42,12 +42,12 @@ export async function DeleteTransaction(id: string) {
       data: {
         ...(transaction.type === "expense" && {
           expense: {
-            decrement: transaction.amount,
+            decrement: transaction.amountInBase,
           },
         }),
         ...(transaction.type === "income" && {
           income: {
-            decrement: transaction.amount,
+            decrement: transaction.amountInBase,
           },
         }),
       },
@@ -63,12 +63,12 @@ export async function DeleteTransaction(id: string) {
       data: {
         ...(transaction.type === "expense" && {
           expense: {
-            decrement: transaction.amount,
+            decrement: transaction.amountInBase,
           },
         }),
         ...(transaction.type === "income" && {
           income: {
-            decrement: transaction.amount,
+            decrement: transaction.amountInBase,
           },
         }),
       },

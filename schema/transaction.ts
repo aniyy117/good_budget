@@ -1,4 +1,7 @@
 import { z } from "zod";
+import { Currencies } from "@/lib/currencies";
+
+const currencyValues = Currencies.map((c) => c.value) as [string, ...string[]];
 
 export const CreateTransactionSchema = z.object({
   amount: z.coerce.number().positive().multipleOf(0.01),
@@ -6,6 +9,7 @@ export const CreateTransactionSchema = z.object({
   date: z.coerce.date(),
   category: z.string(),
   type: z.union([z.literal("income"), z.literal("expense")]),
+  currency: z.enum(currencyValues),
 });
 
 export type CreateTransactionSchemaType = z.infer<

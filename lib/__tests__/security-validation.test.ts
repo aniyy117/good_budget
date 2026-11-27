@@ -25,8 +25,33 @@ describe("security validation schemas", () => {
       date: "not-a-date",
       category: "",
       type: "transfer",
+      currency: "INR",
     });
     expect(result.success).toBe(false);
+  });
+
+  it("rejects create-transaction currency outside allowlist", () => {
+    const result = CreateTransactionSchema.safeParse({
+      amount: 10,
+      description: "coffee shop",
+      date: new Date(),
+      category: "Food",
+      type: "expense",
+      currency: "XYZ",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("accepts allowlisted transaction currency", () => {
+    const result = CreateTransactionSchema.safeParse({
+      amount: 10,
+      description: "coffee shop",
+      date: new Date(),
+      category: "Food",
+      type: "expense",
+      currency: "USD",
+    });
+    expect(result.success).toBe(true);
   });
 
   it("rejects invalid category creates", () => {

@@ -1,6 +1,7 @@
 "use server";
 
 import { requireActionUser } from "@/lib/auth";
+import { computeAmountInBase, getFxRate } from "@/lib/fx";
 import prisma from "@/lib/prisma";
 import {
   CreateTransactionSchema,
@@ -15,7 +16,16 @@ export async function CreateTransaction(form: CreateTransactionSchemaType) {
 
   const user = await requireActionUser();
 
-  const { amount, category, date, description, type } = parsedBody.data;
+  const { amount, category, date, description, type, currency } =
+    parsedBody.data;
+
+  const settings = await prisma.userSettings.findUnique({
+    where: { userId: user.id },
+  });
+  if (!settings) {
+    throw new Error("user settings not found");
+  }
+
   // Scope category by user + name + type (prevents cross-type icon/name mixups).
   const categoryRow = await prisma.category.findFirst({
     where: {
@@ -29,6 +39,10 @@ export async function CreateTransaction(form: CreateTransactionSchemaType) {
     throw new Error("category not found");
   }
 
+  const fxRate = await getFxRate(currency, settings.currency, date);
+  const amountInBase = computeAmountInBase(amount, fxRate);
+  const fxRateAt = new Date();
+
   // NOTE: don't make confusion between $transaction ( prisma ) and prisma.transaction (table)
 
   await prisma.$transaction([
@@ -36,6 +50,10 @@ export async function CreateTransaction(form: CreateTransactionSchemaType) {
       data: {
         userId: user.id,
         amount,
+        currency,
+        amountInBase,
+        fxRate,
+        fxRateAt,
         date,
         description: description || "",
         type,
@@ -58,15 +76,15 @@ export async function CreateTransaction(form: CreateTransactionSchemaType) {
         day: date.getUTCDate(),
         month: date.getUTCMonth(),
         year: date.getUTCFullYear(),
-        expense: type === "expense" ? amount : 0,
-        income: type === "income" ? amount : 0,
+        expense: type === "expense" ? amountInBase : 0,
+        income: type === "income" ? amountInBase : 0,
       },
       update: {
         expense: {
-          increment: type === "expense" ? amount : 0,
+          increment: type === "expense" ? amountInBase : 0,
         },
         income: {
-          increment: type === "income" ? amount : 0,
+          increment: type === "income" ? amountInBase : 0,
         },
       },
     }),
@@ -83,15 +101,15 @@ export async function CreateTransaction(form: CreateTransactionSchemaType) {
         userId: user.id,
         month: date.getUTCMonth(),
         year: date.getUTCFullYear(),
-        expense: type === "expense" ? amount : 0,
-        income: type === "income" ? amount : 0,
+        expense: type === "expense" ? amountInBase : 0,
+        income: type === "income" ? amountInBase : 0,
       },
       update: {
         expense: {
-          increment: type === "expense" ? amount : 0,
+          increment: type === "expense" ? amountInBase : 0,
         },
         income: {
-          increment: type === "income" ? amount : 0,
+          increment: type === "income" ? amountInBase : 0,
         },
       },
     }),
