@@ -2,7 +2,7 @@
 
 **Product goal:** Phased modernization of GoodBudget toward **Next.js 16** without rewriting the product or compromising auth, UX, or financial data.
 
-**Last updated:** 27 November 2026 (WP10 Next.js 16 completed)
+**Last updated:** 27 November 2026 (WP11 tests + CI completed)
 
 Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT.md`](./PHASE_0_BASELINE_REPORT.md) · [Audit](../audit/NEXTJS_APPLICATION_AUDIT.md) · [`AGENTS.md`](../../AGENTS.md)
 
@@ -97,9 +97,9 @@ Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT
 
 | Item | Status |
 |------|--------|
-| Vitest + critical unit/integration tests | Pending |
-| Playwright smoke E2E | Pending |
-| CI workflow | Pending |
+| Vitest + critical unit/integration tests | **Completed** (expanded unit; auth E2E deferred) — [WP11](./WP11_TESTS_CI_REPORT.md) |
+| Playwright smoke E2E | **Partial** — public smoke scaffold; Clerk CRUD deferred |
+| CI workflow | **Completed** — `.github/workflows/ci.yml` |
 | README / `.env.example` (names only) | Pending (README partially updated with docs system) |
 | Money type migration execution | Pending — plan in [`DATABASE_MIGRATION_PLAN.md`](./DATABASE_MIGRATION_PLAN.md) |
 

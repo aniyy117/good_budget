@@ -184,9 +184,9 @@ Related: [`MODERNIZATION_ROADMAP.md`](./MODERNIZATION_ROADMAP.md) · [Audit issu
 
 | | |
 |--|--|
-| **Status** | Pending |
-| **Actions** | Vitest schemas/actions; Playwright smoke; GitHub Actions |
-| **Exit** | CI required on PRs |
+| **Status** | **Completed** (27 November 2026) — see [`WP11_TESTS_CI_REPORT.md`](./WP11_TESTS_CI_REPORT.md) |
+| **Actions** | Expanded Vitest; Playwright public smoke scaffold; GitHub Actions lint/typecheck/test/build; `typecheck` script |
+| **Exit** | Met for unit+CI gate; authenticated E2E deferred (Clerk test secrets) |
 | **See** | [`TESTING_STRATEGY.md`](../architecture/TESTING_STRATEGY.md) |
 
 ---

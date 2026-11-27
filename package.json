@@ -7,10 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
     "prisma-studio": "npx prisma studio",
     "postinstall": "prisma generate",
     "test": "vitest run",
-    "test:security": "vitest run lib/__tests__/security-validation.test.ts"
+    "test:security": "vitest run lib/__tests__/security-validation.test.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.39.9",
@@ -74,6 +77,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",
+    "@playwright/test": "^1.65.1",
     "@tanstack/react-query-devtools": "^5.32.1",
     "@types/node": "^20",
     "@types/react": "^19.3.3",

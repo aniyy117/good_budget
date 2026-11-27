@@ -1,96 +1,65 @@
 # Testing Strategy
 
-**Current state:** Minimal Vitest suite for security validation schemas (`npm test`). No E2E/CI yet.  
-**Target:** Layered tests + CI gates before claiming production readiness (modernization Phase 5).
+**Current state (WP11):** Vitest unit suite (`npm test`, 19 tests), `npm run typecheck`, GitHub Actions CI, Playwright public smoke scaffold. Authenticated E2E still needs a Clerk test project.  
+**Target:** Layered tests + CI before claiming full production readiness.
 
-Related: [`AGENTS.md`](../../AGENTS.md) · [`EXECUTION_PLAN.md`](../modernization/EXECUTION_PLAN.md)
+Related: [`AGENTS.md`](../../AGENTS.md) · [`EXECUTION_PLAN.md`](../modernization/EXECUTION_PLAN.md) · [`WP11_TESTS_CI_REPORT.md`](../modernization/WP11_TESTS_CI_REPORT.md)
 
 ---
 
 ## Goals
 
 1. Prevent regressions in auth gating, money math/aggregates, and CRUD flows.
-2. Make upgrades (Next 14 → 16) verifiable.
-3. Keep tests fast enough for local iteration; reserve E2E for critical paths.
+2. Make upgrades (Next major bumps) verifiable in CI.
+3. Keep unit tests fast; reserve E2E for critical paths.
 
 ---
 
-## Recommended tooling (not installed yet)
+## Tooling
 
-| Layer | Tool | Scope |
-|-------|------|-------|
-| Unit | Vitest | Zod schemas, helpers (`DateToUTCDate`, formatters), pure reducers |
-| Component | Vitest + React Testing Library | Dialogs, pickers (mock Server Actions) |
-| Integration | Vitest + Prisma test DB or mocked Prisma | Server Actions with ownership rules |
-| E2E | Playwright | Sign-in → wizard → create transaction → delete → manage category |
-| Static | `eslint`, `tsc`, `next build` | Every PR |
-
-Do not add Jest if Vitest is chosen — pick one unit runner.
+| Layer | Tool | Status |
+|-------|------|--------|
+| Unit | Vitest | **In use** — schemas, FX, helpers |
+| E2E | Playwright | **Scaffold** — public `/sign-in`, `/sign-up` |
+| Static | `eslint`, `tsc`, `next build` | **CI** — `.github/workflows/ci.yml` |
 
 ---
 
-## Critical test cases (priority order)
-
-### Auth and isolation
-
-- Unauthenticated access to dashboard/API returns redirect or 401 as designed.
-- User A cannot read/update/delete User B’s transactions or categories.
-
-### Onboarding
-
-- Settings are created only via the intended mutation path (not GET).
-- Currency must be in the allowlist.
-
-### Transactions
-
-- Create income/expense updates `Transaction` + month/year history.
-- Delete reverses aggregates correctly.
-- Category lookup respects **type**.
-- Date range validation (`MAX_DATE_RANGE_DAYS`).
-
-### Categories
-
-- Unique `(name, userId, type)` enforced.
-- Delete does not cross users.
-
-### Regression after upgrades
-
-- Build + lint + smoke E2E on Next bump PRs.
-
----
-
-## Verification required before “done” (even without tests today)
+## Commands
 
 ```bash
 npm run lint
-npm run build
-```
-
-When scripts exist:
-
-```bash
 npm run typecheck
 npm test
-npm run test:e2e
+npm run build
+npm run test:e2e   # requires app reachable (see playwright.config.ts)
 ```
 
 ---
 
-## CI (planned)
+## Critical cases still to expand
 
-GitHub Actions (or Vercel checks) should run:
+- Authenticated: wizard → create/delete transaction → manage category (Clerk test secrets).
+- User isolation (User A cannot touch User B data) via action/integration tests.
+- Aggregate create/delete consistency with mocked or test Prisma.
 
-1. Install + `prisma generate`
+---
+
+## CI
+
+GitHub Actions on `pull_request` / `push` to main:
+
+1. `npm ci --legacy-peer-deps`
 2. Lint
 3. Typecheck
 4. Unit tests
-5. Build  
-E2E may run on main/PR with secrets for Clerk test instance — **Needs manual setup**.
+5. Build (placeholder Clerk/Postgres env names only)
+
+E2E is **not** in CI yet (browser install + Clerk).
 
 ---
 
 ## What not to do
 
-- Do not claim “fully tested” until suites exist and pass in CI.
-- Do not commit real Clerk/Postgres production secrets into CI; use dedicated test projects.
-- Do not skip build verification after dependency upgrades.
+- Do not claim “fully tested” until authenticated E2E exists and passes.
+- Do not commit real Clerk/Postgres production secrets into CI.
