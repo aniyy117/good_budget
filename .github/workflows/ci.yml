@@ -16,11 +16,11 @@ jobs:
     timeout-minutes: 20
 
     env:
-      # Build-time placeholders only — not real secrets.
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ci_placeholder
-      CLERK_SECRET_KEY: sk_test_ci_placeholder
-      POSTGRES_PRISMA_URL: postgresql://user:pass@localhost:5432/ci?schema=public
-      POSTGRES_URL_NON_POOLING: postgresql://user:pass@localhost:5432/ci?schema=public
+      # From repo Secrets / Variables — never hardcode keys in workflow YAML.
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+      POSTGRES_PRISMA_URL: ${{ secrets.POSTGRES_PRISMA_URL }}
+      POSTGRES_URL_NON_POOLING: ${{ secrets.POSTGRES_URL_NON_POOLING }}
 
     steps:
       - name: Checkout
