@@ -2,7 +2,7 @@
 
 **Product goal:** Phased modernization of GoodBudget toward **Next.js 16** without rewriting the product or compromising auth, UX, or financial data.
 
-**Last updated:** 27 November 2026 (WP6 RSC shells completed)
+**Last updated:** 27 November 2026 (WP9 DB index completed)
 
 Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT.md`](./PHASE_0_BASELINE_REPORT.md) · [Audit](../audit/NEXTJS_APPLICATION_AUDIT.md) · [`AGENTS.md`](../../AGENTS.md)
 
@@ -54,8 +54,8 @@ Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT
 | Fix onboarding settings create (no GET side effect) | BUG-01, BUG-11 | **Completed** ([WP5 report](./WP5_ONBOARDING_SETTINGS_REPORT.md)); BUG-13 already WP3 |
 | Multi-currency (original + base snapshot) | — | **Completed** ([WP-MC report](./WP_MULTI_CURRENCY_REPORT.md)) |
 | RSC shells for manage/transactions | ARCH-01 | **Completed** ([WP6 report](./WP6_RSC_SHELLS_REPORT.md)) |
-| Shared date-range controls | ARCH-02 | Pending |
-| Emoji popover / CategoryPicker / stats 400 consistency | BUG-14–16 | **Partial** — BUG-16 done (WP2); BUG-14/15 pending |
+| Shared date-range controls | ARCH-02 | **Completed** ([WP7 report](./WP7_UX_BUGFIXES_REPORT.md)) |
+| Emoji popover / CategoryPicker / stats 400 consistency | BUG-14–16 | **Completed** — BUG-16 (WP2); BUG-14/15 ([WP7 report](./WP7_UX_BUGFIXES_REPORT.md)) |
 | Cleanup logs, unused UI, action organization | QUAL-* | Pending |
 | Schema naming (`updatedAt`) | DATA-03 | Pending |
 
@@ -84,9 +84,9 @@ Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT
 
 | Item | Audit IDs | Status |
 |------|-----------|--------|
-| Dynamic import recharts + emoji-mart | PERF-01 | Pending |
-| React Query defaults; Devtools dev-only | PERF-02 | Pending |
-| DB indexes on Transaction | DATA-02 | Pending |
+| Dynamic import recharts + emoji-mart | PERF-01 | **Completed** ([WP8 report](./WP8_PERFORMANCE_REPORT.md)) |
+| React Query defaults; Devtools dev-only | PERF-02 | **Completed** ([WP8 report](./WP8_PERFORMANCE_REPORT.md)) |
+| DB indexes on Transaction | DATA-02 | **Completed** ([WP9 report](./WP9_DB_INDEXES_REPORT.md); apply migrate when DB up) |
 | Bundle analyzer pass | — | Pending |
 
 **Exit criteria:** Measurable First Load JS reduction on `/`; indexes applied in non-prod then prod.

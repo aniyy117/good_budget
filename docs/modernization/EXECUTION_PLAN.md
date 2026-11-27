@@ -135,9 +135,10 @@ Related: [`MODERNIZATION_ROADMAP.md`](./MODERNIZATION_ROADMAP.md) · [Audit issu
 
 | | |
 |--|--|
-| **Status** | Pending |
-| **Files** | `CreateCategoryDialog.tsx`, `CategoryPicker.tsx`, Overview + Transactions date range |
-| **Exit** | Emoji popover dismiss works; CategoryPicker sync clean; shared date-range helper |
+| **Status** | **Completed** (27 November 2026) — see [`WP7_UX_BUGFIXES_REPORT.md`](./WP7_UX_BUGFIXES_REPORT.md) |
+| **Files** | `CreateCategoryDialog.tsx`, `CategoryPicker.tsx`, `hooks/use-date-range-filter.ts`, Overview + TransactionsPageContent |
+| **Actions** | Popover `onOpenChange`; CategoryPicker select→onChange; shared date-range hook |
+| **Exit** | Met: emoji dismiss works; picker sync clean; DRY date-range validation |
 | **Audit** | BUG-14, BUG-15, ARCH-02 |
 
 ---
@@ -146,9 +147,10 @@ Related: [`MODERNIZATION_ROADMAP.md`](./MODERNIZATION_ROADMAP.md) · [Audit issu
 
 | | |
 |--|--|
-| **Status** | Pending |
-| **Files** | `History.tsx`, `CreateCategoryDialog.tsx`, `RootProviders.tsx` |
-| **Exit** | Lower First Load JS on `/`; Devtools only in development |
+| **Status** | **Completed** (27 November 2026) — see [`WP8_PERFORMANCE_REPORT.md`](./WP8_PERFORMANCE_REPORT.md) |
+| **Files** | `History.tsx`, `HistoryChart.tsx`, `EmojiPickerPanel.tsx`, `CreateCategoryDialog.tsx`, `RootProviders.tsx` |
+| **Actions** | Dynamic recharts + lazy emoji-mart; RQ `staleTime` 60s; Devtools development-only |
+| **Exit** | Met: `/` First Load JS **426 kB → 221 kB**; Devtools gated |
 | **Audit** | PERF-01, PERF-02 |
 
 ---
@@ -157,11 +159,11 @@ Related: [`MODERNIZATION_ROADMAP.md`](./MODERNIZATION_ROADMAP.md) · [Audit issu
 
 | | |
 |--|--|
-| **Status** | Pending |
-| **Files** | `prisma/schema.prisma`, migration |
-| **Actions** | `@@index([userId, date])` on Transaction; optional `updatedAt` rename |
-| **Exit** | Migration applied to staging; explain plans improved |
-| **Audit** | DATA-02, DATA-03 |
+| **Status** | **Completed** (27 November 2026) — see [`WP9_DB_INDEXES_REPORT.md`](./WP9_DB_INDEXES_REPORT.md) |
+| **Files** | `prisma/schema.prisma`, `prisma/migrations/20261127111659_transaction_user_date_index/` |
+| **Actions** | Approach A: `@@index([userId, date])` only; `updateAt` rename deferred (DATA-03) |
+| **Exit** | Schema + migration committed in tree; apply with `prisma migrate deploy` when DB reachable |
+| **Audit** | DATA-02 (DATA-03 deferred) |
 | **Depends** | Backup procedure in [`DATABASE_MIGRATION_PLAN.md`](./DATABASE_MIGRATION_PLAN.md) |
 
 ---

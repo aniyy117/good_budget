@@ -20,7 +20,7 @@ import type { CategoryOption, TransactionType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Check, ChevronsUpDown } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 
 interface Props {
   type: TransactionType;
@@ -31,12 +31,6 @@ function CategoryPicker({ type, onChange }: Props) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
-  useEffect(() => {
-    if (!value) return;
-    // when the value changes, call onChange callback
-    onChange(value);
-  }, [onChange, value]);
-
   const categoriesQuery = useQuery({
     queryKey: ["categories", type],
     queryFn: () => apiGet<CategoryOption[]>(`/api/categories?type=${type}`),
@@ -46,12 +40,20 @@ function CategoryPicker({ type, onChange }: Props) {
     (category: CategoryOption) => category.name === value
   );
 
+  const selectCategory = useCallback(
+    (name: string) => {
+      setValue(name);
+      onChange(name);
+      setOpen(false);
+    },
+    [onChange]
+  );
+
   const successCallback = useCallback(
     (category: CategoryOption) => {
-      setValue(category.name);
-      setOpen((prev) => !prev);
+      selectCategory(category.name);
     },
-    [setValue, setOpen]
+    [selectCategory]
   );
 
   return (
@@ -92,8 +94,7 @@ function CategoryPicker({ type, onChange }: Props) {
                   <CommandItem
                     key={category.name}
                     onSelect={() => {
-                      setValue(category.name);
-                      setOpen((prev) => !prev);
+                      selectCategory(category.name);
                     }}
                   >
                     <CategoryRow category={category} />

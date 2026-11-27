@@ -3,42 +3,19 @@
 import CategoriesStats from "@/app/(dashboard)/_components/CategoriesStats";
 import StatsCards from "@/app/(dashboard)/_components/StatsCards";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
-import { MAX_DATE_RANGE_DAYS } from "@/lib/constants";
+import { useDateRangeFilter } from "@/hooks/use-date-range-filter";
 import type { UserCurrencySettings } from "@/lib/types";
-import { differenceInDays, startOfMonth } from "date-fns";
-import React, { useState } from "react";
-import { toast } from "sonner";
+import React from "react";
 
 function Overview({ userSettings }: { userSettings: UserCurrencySettings }) {
-  const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
-    from: startOfMonth(new Date()),
-    to: new Date(),
-  });
+  const { dateRange, dateRangePickerProps } = useDateRangeFilter();
 
   return (
     <>
       <div className="container flex flex-wrap items-end justify-between gap-2 py-6">
         <h2 className="text-3xl font-bold">Overview</h2>
         <div className="flex items-center gap-3">
-          <DateRangePicker
-            initialDateFrom={dateRange.from}
-            initialDateTo={dateRange.to}
-            showCompare={false}
-            onUpdate={(values) => {
-              const { from, to } = values.range;
-              // We update the date range only if both dates are set
-
-              if (!from || !to) return;
-              if (differenceInDays(to, from) > MAX_DATE_RANGE_DAYS) {
-                toast.error(
-                  `The selected date range is too big. Max allowed range is ${MAX_DATE_RANGE_DAYS} days!`
-                );
-                return;
-              }
-
-              setDateRange({ from, to });
-            }}
-          />
+          <DateRangePicker {...dateRangePickerProps} />
         </div>
       </div>
       <div className="container flex w-full flex-col gap-2">
