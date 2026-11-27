@@ -1,6 +1,6 @@
 import { requireApiUserId } from "@/lib/auth";
+import { toNumber } from "@/lib/money";
 import prisma from "@/lib/prisma";
-import type { BalanceGroupRow } from "@/lib/types";
 import { OverviewQuerySchema } from "@/schema/overview";
 
 export async function GET(request: Request) {
@@ -43,16 +43,16 @@ async function getBalanceStats(userId: string, from: Date, to: Date) {
       },
     },
     _sum: {
-      amount: true,
+      amountInBase: true,
     },
   });
 
   return {
-    expense:
-      totals.find((t: BalanceGroupRow) => t.type === "expense")?._sum.amount ||
-      0,
-    income:
-      totals.find((t: BalanceGroupRow) => t.type === "income")?._sum.amount ||
-      0,
+    expense: toNumber(
+      totals.find((t) => t.type === "expense")?._sum.amountInBase
+    ),
+    income: toNumber(
+      totals.find((t) => t.type === "income")?._sum.amountInBase
+    ),
   };
 }

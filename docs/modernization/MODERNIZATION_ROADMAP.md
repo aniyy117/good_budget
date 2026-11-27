@@ -2,7 +2,7 @@
 
 **Product goal:** Phased modernization of GoodBudget toward **Next.js 16** without rewriting the product or compromising auth, UX, or financial data.
 
-**Last updated:** 27 November 2026 (WP11 tests + CI completed)
+**Last updated:** 27 November 2026 (WP12 Decimal money completed in-repo)
 
 Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT.md`](./PHASE_0_BASELINE_REPORT.md) · [Audit](../audit/NEXTJS_APPLICATION_AUDIT.md) · [`AGENTS.md`](../../AGENTS.md)
 
@@ -57,7 +57,7 @@ Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT
 | Shared date-range controls | ARCH-02 | **Completed** ([WP7 report](./WP7_UX_BUGFIXES_REPORT.md)) |
 | Emoji popover / CategoryPicker / stats 400 consistency | BUG-14–16 | **Completed** — BUG-16 (WP2); BUG-14/15 ([WP7 report](./WP7_UX_BUGFIXES_REPORT.md)) |
 | Cleanup logs, unused UI, action organization | QUAL-* | Pending |
-| Schema naming (`updatedAt`) | DATA-03 | Pending |
+| Schema naming (`updatedAt`) | DATA-03 | **Completed** (WP12) |
 
 **Exit criteria:** Clear RSC/client boundaries; onboarding intentional; no known UX bugs from Phase 2 list.
 
@@ -101,7 +101,7 @@ Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT
 | Playwright smoke E2E | **Partial** — public smoke scaffold; Clerk CRUD deferred |
 | CI workflow | **Completed** — `.github/workflows/ci.yml` |
 | README / `.env.example` (names only) | Pending (README partially updated with docs system) |
-| Money type migration execution | Pending — plan in [`DATABASE_MIGRATION_PLAN.md`](./DATABASE_MIGRATION_PLAN.md) |
+| Money type migration execution | **Completed in-repo** ([WP12 report](./WP12_MONEY_DECIMAL_REPORT.md)); apply migrate after backup |
 
 **Exit criteria:** CI green on main; E2E smoke passes; ops docs sufficient for a new engineer/agent.
 

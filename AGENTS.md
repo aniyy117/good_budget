@@ -80,7 +80,7 @@ See [`docs/architecture/SECURITY_GUIDELINES.md`](docs/architecture/SECURITY_GUID
 - Schema: [`prisma/schema.prisma`](prisma/schema.prisma) — `UserSettings`, `Category`, `Transaction`, `MonthHistory`, `YearHistory`.
 - Client singleton: [`lib/prisma.ts`](lib/prisma.ts).
 - Zod schemas: [`schema/`](schema/).
-- Money currently stored as `Float` (known risk — migrate carefully per DB plan).
+- Money stored as Prisma `Decimal` (WP12). Use `toDecimal` / `toNumber` from [`lib/money.ts`](lib/money.ts); never coerce blindly with `Number(decimal)` in hot paths without checks.
 
 ### Modernization objectives
 

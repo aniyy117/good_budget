@@ -1,7 +1,7 @@
 # Database Migration Plan
 
-**Status:** Plan only — no migrations executed as part of the documentation task or Phase 0.  
-**ORM:** Prisma 5.13 · **DB:** PostgreSQL (Vercel-linked; live read verified in Phase 0)  
+**Status:** Waves 1–3 implemented in-repo (indexes WP9; Decimal + `updatedAt` WP12). **Deploy still requires backup + `prisma migrate deploy`.**  
+**ORM:** Prisma 5.13 · **DB:** PostgreSQL  
 
 Related: [`prisma/schema.prisma`](../../prisma/schema.prisma) · [Audit DATA-*](../audit/NEXTJS_APPLICATION_AUDIT.md) · [`MIGRATION_RISK_ASSESSMENT.md`](./MIGRATION_RISK_ASSESSMENT.md) · [`PHASE_0_BASELINE_REPORT.md`](./PHASE_0_BASELINE_REPORT.md)
 

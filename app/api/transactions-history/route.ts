@@ -1,5 +1,6 @@
 import { requireApiUserId } from "@/lib/auth";
 import { GetFormatterForCurrency } from "@/lib/helpers";
+import { toNumber } from "@/lib/money";
 import prisma from "@/lib/prisma";
 import type { Transaction } from "@/lib/types";
 import { OverviewQuerySchema } from "@/schema/overview";
@@ -53,7 +54,7 @@ async function getTransactionsHistory(userId: string, from: Date, to: Date) {
   const baseCurrency = userSettings.currency;
   const baseFormatter = GetFormatterForCurrency(baseCurrency);
 
-  const transactions: Transaction[] = await prisma.transaction.findMany({
+  const rows = await prisma.transaction.findMany({
     where: {
       userId,
       date: {
@@ -66,7 +67,23 @@ async function getTransactionsHistory(userId: string, from: Date, to: Date) {
     },
   });
 
-  return transactions.map((transaction: Transaction) => {
+  return rows.map((row) => {
+    const transaction: Transaction = {
+      id: row.id,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      amount: toNumber(row.amount),
+      currency: row.currency,
+      amountInBase: toNumber(row.amountInBase),
+      fxRate: toNumber(row.fxRate),
+      fxRateAt: row.fxRateAt,
+      description: row.description,
+      date: row.date,
+      userId: row.userId,
+      type: row.type,
+      category: row.category,
+      categoryIcon: row.categoryIcon,
+    };
     const formattedAmount = GetFormatterForCurrency(
       transaction.currency
     ).format(transaction.amount);

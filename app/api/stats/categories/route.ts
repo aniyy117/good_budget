@@ -1,4 +1,5 @@
 import { requireApiUserId } from "@/lib/auth";
+import { toNumber } from "@/lib/money";
 import prisma from "@/lib/prisma";
 import type { CategoryStatsRow } from "@/lib/types";
 import { OverviewQuerySchema } from "@/schema/overview";
@@ -47,14 +48,21 @@ async function getCategoriesStats(
       },
     },
     _sum: {
-      amount: true,
+      amountInBase: true,
     },
     orderBy: {
       _sum: {
-        amount: "desc",
+        amountInBase: "desc",
       },
     },
   });
 
-  return stats;
+  return stats.map((row) => ({
+    type: row.type,
+    category: row.category,
+    categoryIcon: row.categoryIcon,
+    _sum: {
+      amount: toNumber(row._sum.amountInBase),
+    },
+  }));
 }

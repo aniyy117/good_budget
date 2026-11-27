@@ -195,8 +195,9 @@ Related: [`MODERNIZATION_ROADMAP.md`](./MODERNIZATION_ROADMAP.md) · [Audit issu
 
 | | |
 |--|--|
-| **Status** | Pending |
-| **Depends** | Explicit product decision (Decimal vs integer cents) + backups |
+| **Status** | **Completed in-repo** (27 November 2026) — see [`WP12_MONEY_DECIMAL_REPORT.md`](./WP12_MONEY_DECIMAL_REPORT.md) |
+| **Decision** | Decimal(18,2) amounts + Decimal(18,8) fxRate; `updateAt` → `updatedAt` |
+| **Depends** | **Backup + `prisma migrate deploy`** still required on real DB |
 | **See** | [`DATABASE_MIGRATION_PLAN.md`](./DATABASE_MIGRATION_PLAN.md) |
 
 ---

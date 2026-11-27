@@ -1,12 +1,7 @@
 import { requireApiUserId } from "@/lib/auth";
+import { toNumber } from "@/lib/money";
 import prisma from "@/lib/prisma";
-import type {
-  HistoryPoint,
-  MonthHistoryGroupRow,
-  Period,
-  Timeframe,
-  YearHistoryGroupRow,
-} from "@/lib/types";
+import type { HistoryPoint, Period, Timeframe } from "@/lib/types";
 import { getDaysInMonth } from "date-fns";
 import { z } from "zod";
 
@@ -88,12 +83,10 @@ async function getYearHistoryData(userId: string, year: number) {
     let expense = 0;
     let income = 0;
 
-    const month = result.find(
-      (row: YearHistoryGroupRow) => row.month === i
-    );
+    const month = result.find((row) => row.month === i);
     if (month) {
-      expense = month._sum.expense || 0;
-      income = month._sum.income || 0;
+      expense = toNumber(month._sum.expense);
+      income = toNumber(month._sum.income);
     }
 
     history.push({
@@ -138,12 +131,10 @@ async function getMonthHistoryData(
     let expense = 0;
     let income = 0;
 
-    const day = result.find(
-      (row: MonthHistoryGroupRow) => row.day === i
-    );
+    const day = result.find((row) => row.day === i);
     if (day) {
-      expense = day._sum.expense || 0;
-      income = day._sum.income || 0;
+      expense = toNumber(day._sum.expense);
+      income = toNumber(day._sum.income);
     }
 
     history.push({

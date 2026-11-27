@@ -2,6 +2,7 @@
 
 import { requireActionUser } from "@/lib/auth";
 import { computeAmountInBase, getFxRate } from "@/lib/fx";
+import { toDecimal } from "@/lib/money";
 import prisma from "@/lib/prisma";
 import {
   CreateTransactionSchema,
@@ -42,6 +43,9 @@ export async function CreateTransaction(form: CreateTransactionSchemaType) {
   const fxRate = await getFxRate(currency, settings.currency, date);
   const amountInBase = computeAmountInBase(amount, fxRate);
   const fxRateAt = new Date();
+  const amountDec = toDecimal(amount);
+  const amountInBaseDec = toDecimal(amountInBase);
+  const fxRateDec = toDecimal(fxRate);
 
   // NOTE: don't make confusion between $transaction ( prisma ) and prisma.transaction (table)
 
@@ -49,10 +53,10 @@ export async function CreateTransaction(form: CreateTransactionSchemaType) {
     prisma.transaction.create({
       data: {
         userId: user.id,
-        amount,
+        amount: amountDec,
         currency,
-        amountInBase,
-        fxRate,
+        amountInBase: amountInBaseDec,
+        fxRate: fxRateDec,
         fxRateAt,
         date,
         description: description || "",
@@ -76,15 +80,15 @@ export async function CreateTransaction(form: CreateTransactionSchemaType) {
         day: date.getUTCDate(),
         month: date.getUTCMonth(),
         year: date.getUTCFullYear(),
-        expense: type === "expense" ? amountInBase : 0,
-        income: type === "income" ? amountInBase : 0,
+        expense: type === "expense" ? amountInBaseDec : toDecimal(0),
+        income: type === "income" ? amountInBaseDec : toDecimal(0),
       },
       update: {
         expense: {
-          increment: type === "expense" ? amountInBase : 0,
+          increment: type === "expense" ? amountInBaseDec : toDecimal(0),
         },
         income: {
-          increment: type === "income" ? amountInBase : 0,
+          increment: type === "income" ? amountInBaseDec : toDecimal(0),
         },
       },
     }),
@@ -101,15 +105,15 @@ export async function CreateTransaction(form: CreateTransactionSchemaType) {
         userId: user.id,
         month: date.getUTCMonth(),
         year: date.getUTCFullYear(),
-        expense: type === "expense" ? amountInBase : 0,
-        income: type === "income" ? amountInBase : 0,
+        expense: type === "expense" ? amountInBaseDec : toDecimal(0),
+        income: type === "income" ? amountInBaseDec : toDecimal(0),
       },
       update: {
         expense: {
-          increment: type === "expense" ? amountInBase : 0,
+          increment: type === "expense" ? amountInBaseDec : toDecimal(0),
         },
         income: {
-          increment: type === "income" ? amountInBase : 0,
+          increment: type === "income" ? amountInBaseDec : toDecimal(0),
         },
       },
     }),

@@ -23,10 +23,11 @@ export type Category = {
   type: string;
 };
 
+/** Domain transaction shape after API serialization (numbers, not Prisma.Decimal). */
 export type Transaction = {
   id: string;
   createdAt: Date;
-  updateAt: Date;
+  updatedAt: Date;
   amount: number;
   currency: string;
   amountInBase: number;
@@ -59,6 +60,7 @@ export type AmountSum = {
   amount: number | null;
 };
 
+/** Serialized history totals (numbers). Raw Prisma groupBy may use Decimal. */
 export type IncomeExpenseSum = {
   income: number | null;
   expense: number | null;
