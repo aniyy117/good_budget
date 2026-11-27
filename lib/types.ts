@@ -28,6 +28,10 @@ export type Transaction = {
   createdAt: Date;
   updateAt: Date;
   amount: number;
+  currency: string;
+  amountInBase: number;
+  fxRate: number;
+  fxRateAt: Date;
   description: string;
   date: Date;
   userId: string;

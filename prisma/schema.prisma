@@ -36,8 +36,12 @@ model Transaction {
   createdAt DateTime @default(now())
   updateAt  DateTime @default(now())
 
-  amount      Float
-  description String
+  amount       Float
+  currency     String   @default("INR")
+  amountInBase Float    @default(0)
+  fxRate       Float    @default(1)
+  fxRateAt     DateTime @default(now())
+  description  String
   date        DateTime
   userId      String
   type        String   @default("income")
