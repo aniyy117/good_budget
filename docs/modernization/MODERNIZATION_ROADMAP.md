@@ -2,7 +2,7 @@
 
 **Product goal:** Phased modernization of GoodBudget toward **Next.js 16** without rewriting the product or compromising auth, UX, or financial data.
 
-**Last updated:** 27 November 2026 (WP5 onboarding settings create path completed)
+**Last updated:** 27 November 2026 (WP-MC multi-currency completed)
 
 Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT.md`](./PHASE_0_BASELINE_REPORT.md) · [Audit](../audit/NEXTJS_APPLICATION_AUDIT.md) · [`AGENTS.md`](../../AGENTS.md)
 
@@ -52,6 +52,7 @@ Related: [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md) · [`PHASE_0_BASELINE_REPORT
 | Item | Audit IDs | Status |
 |------|-----------|--------|
 | Fix onboarding settings create (no GET side effect) | BUG-01, BUG-11 | **Completed** ([WP5 report](./WP5_ONBOARDING_SETTINGS_REPORT.md)); BUG-13 already WP3 |
+| Multi-currency (original + base snapshot) | — | **Completed** ([WP-MC report](./WP_MULTI_CURRENCY_REPORT.md)) |
 | RSC shells for manage/transactions | ARCH-01 | Pending |
 | Shared date-range controls | ARCH-02 | Pending |
 | Emoji popover / CategoryPicker / stats 400 consistency | BUG-14–16 | **Partial** — BUG-16 done (WP2); BUG-14/15 pending |

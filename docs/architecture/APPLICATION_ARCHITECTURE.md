@@ -1,7 +1,7 @@
 # Application Architecture
 
 **Status:** Living document  
-**Last verified:** 27 November 2026 (post WP3)  
+**Last verified:** 27 November 2026 (post multi-currency)  
 **Current runtime:** Next.js 14.2.35 App Router  
 **Target runtime:** Next.js 16 (phased; not deployed yet)
 
@@ -91,12 +91,14 @@ Client components call [`apiGet`](../../lib/api.ts) (`/api/...`) via TanStack Qu
 
 ### 2.6 Domain model (logical)
 
-- **UserSettings** — per Clerk user currency preference.
+- **UserSettings** — per Clerk user **base / reporting** currency (wizard + manage). Default for new transactions; not a silent relabel of historical amounts.
 - **Category** — unique `(name, userId, type)`; emoji icon.
-- **Transaction** — denormalized `category` + `categoryIcon` strings; no Prisma relation to Category.
-- **MonthHistory / YearHistory** — rollups maintained in write actions for charts.
+- **Transaction** — denormalized `category` + `categoryIcon` strings; no Prisma relation to Category. Stores original `amount` + `currency`, plus write-time FX snapshot (`amountInBase`, `fxRate`, `fxRateAt`).
+- **MonthHistory / YearHistory** — rollups in **base currency** only; create/delete use `amountInBase`.
 
 Tenant key everywhere: Clerk `userId` string (no FK to Clerk).
+
+**FX:** Server-side rates via [`lib/fx.ts`](../../lib/fx.ts) (Frankfurter by default; optional `FX_API_BASE_URL`). Fail closed on rate fetch failure. Spec: [`docs/superpowers/specs/2026-11-27-multi-currency-design.md`](../superpowers/specs/2026-11-27-multi-currency-design.md).
 
 ### 2.7 Providers
 
@@ -142,6 +144,7 @@ Do **not** introduce a second app or Pages Router.
 2. Creating/deleting a transaction keeps `MonthHistory` / `YearHistory` consistent inside a Prisma transaction.
 3. Date ranges for overview/history APIs respect `MAX_DATE_RANGE_DAYS` (90).
 4. Currency values must be members of `lib/currencies.ts`.
+5. History aggregates and overview totals use `amountInBase`; original `amount`/`currency` are preserved for display.
 
 ---
 

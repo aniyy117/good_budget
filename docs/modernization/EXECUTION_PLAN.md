@@ -106,6 +106,19 @@ Related: [`MODERNIZATION_ROADMAP.md`](./MODERNIZATION_ROADMAP.md) · [Audit issu
 
 ---
 
+## WP-MC — Multi-currency transactions (pulled forward)
+
+| | |
+|--|--|
+| **Status** | **Completed** (27 November 2026) — see [`WP_MULTI_CURRENCY_REPORT.md`](./WP_MULTI_CURRENCY_REPORT.md) |
+| **Files** | Prisma migration, `lib/fx.ts`, create/delete actions, create dialog, transactions history API/table, `CurrencyComboBox` |
+| **Actions** | Snapshot FX at write; history uses `amountInBase`; dual display; base-change warning; no historical rebase |
+| **Exit** | Met: original + base fields; Frankfurter FX fail-closed; UI currency + ≈ base line; manage warns on base change |
+| **Spec** | [`docs/superpowers/specs/2026-11-27-multi-currency-design.md`](../superpowers/specs/2026-11-27-multi-currency-design.md) |
+| **Non-goals** | Float→Decimal (WP12); rebase on base change |
+
+---
+
 ## WP6 — RSC shells for manage & transactions
 
 | | |

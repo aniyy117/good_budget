@@ -1,7 +1,7 @@
 # Multi-Currency Transactions — Design Spec
 
 **Date:** 2026-11-27  
-**Status:** Draft for implementation planning (approved in brainstorming)  
+**Status:** Implemented (27 November 2026) — see [`WP_MULTI_CURRENCY_REPORT.md`](../../modernization/WP_MULTI_CURRENCY_REPORT.md)  
 **Product:** GoodBudget  
 **Related:** [`DATABASE_MIGRATION_PLAN.md`](../../modernization/DATABASE_MIGRATION_PLAN.md) · [`EXECUTION_PLAN.md`](../../modernization/EXECUTION_PLAN.md) · WP5 onboarding (base currency)
 

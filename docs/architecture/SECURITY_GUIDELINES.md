@@ -73,6 +73,7 @@ Do not introduce new state-changing **GET** endpoints. `GET /api/user-settings` 
 | `CLERK_SECRET_KEY` | Server | Clerk server |
 | `NEXT_PUBLIC_CLERK_SIGN_IN_URL` / `SIGN_UP_URL` / after-sign URLs | Public | Clerk routing |
 | `NODE_ENV` | Runtime | Prisma singleton behavior |
+| `FX_API_BASE_URL` | Server (optional) | Override Frankfurter-compatible FX API base; default used when unset |
 
 `.env` / `.env.local` stay gitignored.
 
@@ -84,6 +85,7 @@ Do not introduce new state-changing **GET** endpoints. `GET /api/user-settings` 
 - Preserve aggregate consistency (`$transaction`).
 - Plan money type migration carefully (Float → Decimal/cents) — see [`DATABASE_MIGRATION_PLAN.md`](../modernization/DATABASE_MIGRATION_PLAN.md).
 - Export CSV only for the authenticated user’s filtered rows.
+- FX rates are fetched server-side only; create fails closed if conversion cannot be obtained. Do not trust client-supplied `amountInBase` / `fxRate`.
 
 ---
 
